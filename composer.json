@@ -1,0 +1,32 @@
+{
+  "name": "stoyantodorov/framework",
+  "description": "Custom PHP Framework.",
+  "license": "MIT",
+  "support": {
+    "source": "https://github.com/stoyantodorov/framework"
+  },
+  "authors": [
+    {
+      "name": "Stoyan Todorov",
+      "email": "stoyan56722@gmail.com",
+      "role": "Developer"
+
+    }
+  ],
+  "require": {
+    "php": ">=7.4.0",
+    "psr/container": "^1.1.1|^2.0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "StoyanTodorov\\Core\\": "src/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
