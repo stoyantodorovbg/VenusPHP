@@ -3,33 +3,38 @@
 namespace StoyanTodorov\Core\Container;
 
 use Psr\Container\ContainerInterface;
+use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\Container\Exceptions\ServiceNotFoundException;
+use StoyanTodorov\Core\Infrastructure\Singleton;
 
 class Container implements ContainerInterface
 {
-    private static self $instance;
+    use Singleton;
 
     private array $services = [];
 
-    public static function getInstance(): self
+    /**
+     * @param string $id
+     * @param string $class
+     * @param array  $dependencies
+     * @return void
+     * @throws ContainerException
+     */
+    public function bind(string $id, string $class, array $dependencies = []): void
     {
-        if (! isset(self::$instance)) {
-            self::$instance = new self();
+        if (! $this->has($id)) {
+            $this->services[$id] = compact('class', 'dependencies');
+            return;
         }
 
-        return self::$instance;
+        throw new ContainerException($id . ' had been already bound.');
     }
 
     /**
+     * @param string $id
+     * @return mixed
      * @throws ServiceNotFoundException
      */
-    public function set(string $id, string $class, array $dependencies = []): void
-    {
-        $this->has($id);
-
-        $this->services[$id] = compact('class', 'dependencies');
-    }
-
     public function get(string $id)
     {
         if (! $this->has($id)) {
@@ -45,24 +50,12 @@ class Container implements ContainerInterface
         return new $this->services[$id]['class'](...$dependencies);
     }
 
+    /**
+     * @param string $id
+     * @return bool
+     */
     public function has(string $id): bool
     {
         return isset($this->services[$id]);
-    }
-
-    private function __construct()
-    {
-    }
-
-    private function __clone()
-    {
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function __wakeup()
-    {
-        throw new \Exception('Cannot unserialize a the container.');
     }
 }
