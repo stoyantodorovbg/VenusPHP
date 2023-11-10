@@ -1,8 +1,14 @@
 <?php
 
-global $kernel;
 require __DIR__.'/vendor/autoload.php';
 
 use StoyanTodorov\Core\Bootstrapper;
+use StoyanTodorov\Core\Controllers\ErrorsController;
 
-(new Bootstrapper(httpKernel(), 'http'))->bootstrap();
+try {
+    (new Bootstrapper(httpKernel(), 'http'))->bootstrap();
+} catch (\Exception $e) {
+    config('framework-conf', ['debug']) ?
+        throw $e :
+        (new ErrorsController())->errorPage(500);
+}

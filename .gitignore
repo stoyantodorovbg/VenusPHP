@@ -2,3 +2,4 @@
 vendor/
 smarty/compile
 smarty/cache
+.env
