@@ -1,17 +1,14 @@
 <?php
 
+global $kernel;
 require __DIR__.'/vendor/autoload.php';
 
-use StoyanTodorov\Core\Kernel;
-use Symfony\Component\HttpFoundation\Request;
+use StoyanTodorov\Core\Bootstrapper;
 
-$request = Request::createFromGlobals();
+(new Bootstrapper(httpKernel(), 'http'))->bootstrap();
 
-$kernel = Kernel::getInstance();
-$kernel->addBinders();
-$kernel->registerBinders();
-$kernel->handleRequest();
-
+print_r('index');
+print_r(__DIR__);
 //$container = Container::getInstance();
 
 //$testService = $container->get('test-service');

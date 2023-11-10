@@ -6,7 +6,13 @@ class WebController
 {
     public function test()
     {
-        print_r('test controller method');
+        renderTemplate('test', [
+            'title'  => 'Test Title',
+            'cities' => [
+                ['name' => 'Sofia', 'population' => 1300000],
+                ['name' => 'Burgas', 'population' => 200000],
+            ],
+        ]);
     }
 
     public function test1()

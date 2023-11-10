@@ -14,11 +14,15 @@
     }
   ],
   "require": {
-    "php": ">=8.0.0",
+    "php": ">=8.1.0",
     "psr/container": "^1.1.1|^2.0.1",
+    "smarty/smarty": "^4.3",
     "symfony/http-foundation": "^6.3"
   },
   "autoload": {
+    "files": [
+      "src/helpers/base.php"
+    ],
     "psr-4": {
       "StoyanTodorov\\Core\\": "src/"
     }

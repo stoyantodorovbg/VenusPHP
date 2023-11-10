@@ -7,19 +7,15 @@ use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\Container\Exceptions\ServiceNotFoundException;
 use StoyanTodorov\Core\Infrastructure\Singleton;
 
-class Container implements ContainerInterface
+class Container implements ContainerInterface, FrameworkContainerInterface
 {
     use Singleton;
 
     private array $services = [];
 
+
     /**
-     * @param string $id
-     * @param string $class
-     * @param array  $dependencies
-     * @return void
      * @throws ContainerException
-     *
      */
     public function bind(string $id, string $class, array $dependencies = []): void
     {
@@ -29,6 +25,18 @@ class Container implements ContainerInterface
         }
 
         throw new ContainerException($id . ' had been already bound.');
+    }
+
+    /**
+     * @throws ServiceNotFoundException
+     */
+    public function getWithParams(string $id, array $params): object
+    {
+        if (! $this->has($id)) {
+            throw new ServiceNotFoundException('Unknown service ' . $id);
+        }
+
+        return new $this->services[$id]['class'](...$params);
     }
 
     /**
