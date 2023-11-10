@@ -19,6 +19,7 @@ class Container implements ContainerInterface
      * @param array  $dependencies
      * @return void
      * @throws ContainerException
+     *
      */
     public function bind(string $id, string $class, array $dependencies = []): void
     {
