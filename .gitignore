@@ -1,2 +1,4 @@
 .idea/
 vendor/
+smarty/compile
+smarty/cache

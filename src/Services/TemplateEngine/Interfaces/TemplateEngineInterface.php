@@ -14,7 +14,7 @@ interface TemplateEngineInterface
     /**
      * @param string $templatePath
      * @param array  $variables
-     * @return mixed
+     * @return void
      */
-    public function render(string $templatePath, array $variables);
+    public function render(string $templatePath, array $variables = []): void;
 }

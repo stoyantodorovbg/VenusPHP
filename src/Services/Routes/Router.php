@@ -9,18 +9,20 @@ abstract class Router
 {
     protected array $config;
 
-    public function match(Request $request): Response|null
+    public function match(Request $request): bool
     {
         if (! isset($this->config[$request->getMethod()]) ||
             ! isset($this->config[$request->getMethod()][$request->getPathInfo()])
         ) {
-            return null;
+            return false;
         }
 
         $controllerConfig = $this->config[$request->getMethod()][$request->getPathInfo()];
         $controller = $controllerConfig[0];
         $method = $controllerConfig[1];
 
-        return (new $controller)->$method();
+        (new $controller)->$method();
+
+        return true;
     }
 }

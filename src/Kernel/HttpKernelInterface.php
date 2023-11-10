@@ -12,7 +12,7 @@ interface HttpKernelInterface
      *
      * @return Response
      */
-    public function handleRequest(): Response;
+    public function handleRequest();
 
     /**
      * Get template instance

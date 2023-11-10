@@ -32,18 +32,17 @@ class HttpKernel extends Kernel implements HttpKernelInterface, SingletonInterfa
     
     protected TemplateEngineInterface|null $templateEngine;
 
-    public function handleRequest(): Response
+    public function handleRequest(): void
     {
         $request = Request::createFromGlobals();
         $container = $this->getContainer();
         foreach ($this->routes as $routes) {
-            $routes = $container->get($routes);
-            if ($response = $routes->match($request)) {
-                return $response;
+            if ($container->get($routes)->match($request)) {
+                return;
             }
         }
 
-        return (new ErrorsController())->notFound();
+        (new ErrorsController())->errorPage(404);
     }
     
     public function getTemplateEngine(): TemplateEngineInterface

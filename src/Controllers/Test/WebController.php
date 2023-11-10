@@ -17,6 +17,9 @@ class WebController
 
     public function test1()
     {
-        print_r('test1 controller method');
+        renderTemplate('test', [
+            'title'  => 'Test Title',
+            'cities' => [],
+        ]);
     }
 }

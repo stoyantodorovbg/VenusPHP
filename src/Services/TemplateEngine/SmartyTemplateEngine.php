@@ -11,7 +11,6 @@ class SmartyTemplateEngine implements TemplateEngineInterface
 
     public function setup(): TemplateEngineInterface
     {
-        print_r(templatesPath('templates', true));
         $this->instance = new Smarty();
         $this->instance->setTemplateDir(templatesPath('templates', true));
         $this->instance->setConfigDir(templatesPath('configs', true));
@@ -24,7 +23,7 @@ class SmartyTemplateEngine implements TemplateEngineInterface
     /**
      * @throws \SmartyException
      */
-    public function render(string $templatePath, array $variables)
+    public function render(string $templatePath, array $variables = []): void
     {
         foreach ($variables as $name => $value) {
             $this->instance->assign($name, $value);
