@@ -2,9 +2,12 @@
 
 namespace StoyanTodorov\Core\Services\Test;
 
-class DependencyService
+use StoyanTodorov\Core\Services\Test\Interfaces\DependencyDependencyServiceInterface;
+use StoyanTodorov\Core\Services\Test\Interfaces\DependencyServiceInterface;
+
+class DependencyService implements DependencyServiceInterface
 {
-    public function __construct(DependencyDependencyService $service)
+    public function __construct(DependencyDependencyServiceInterface $service)
     {
         $service->test();
     }

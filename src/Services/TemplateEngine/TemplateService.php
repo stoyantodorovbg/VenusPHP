@@ -2,8 +2,8 @@
 
 namespace StoyanTodorov\Core\Services\TemplateEngine;
 
-use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateServiceInterface;
 use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineInterface;
+use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateServiceInterface;
 
 class TemplateService implements TemplateServiceInterface
 {

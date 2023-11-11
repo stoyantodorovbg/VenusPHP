@@ -2,7 +2,9 @@
 
 namespace StoyanTodorov\Core\Services\Test;
 
-class DependencyDependencyService
+use StoyanTodorov\Core\Services\Test\Interfaces\DependencyDependencyServiceInterface;
+
+class DependencyDependencyService implements DependencyDependencyServiceInterface
 {
     public function test()
     {

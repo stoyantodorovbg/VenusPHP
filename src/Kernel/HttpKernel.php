@@ -11,7 +11,6 @@ use StoyanTodorov\Core\Infrastructure\Singleton;
 use StoyanTodorov\Core\Interfaces\SingletonInterface;
 use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class HttpKernel extends Kernel implements HttpKernelInterface, SingletonInterface
 {

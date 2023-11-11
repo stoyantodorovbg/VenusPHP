@@ -3,6 +3,7 @@
 namespace StoyanTodorov\Core\Container;
 
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\Container\Exceptions\ServiceNotFoundException;
 use StoyanTodorov\Core\Infrastructure\Singleton;
@@ -43,6 +44,7 @@ class Container implements ContainerInterface, FrameworkContainerInterface
      * @param string $id
      * @return mixed
      * @throws ServiceNotFoundException
+     * @throws \ReflectionException
      */
     public function get(string $id)
     {
@@ -52,11 +54,25 @@ class Container implements ContainerInterface, FrameworkContainerInterface
 
         $dependencies = [];
 
-        foreach ($this->services[$id]['dependencies'] as $service) {
-            $dependencies[] = $this->get($service);
+        if ($this->services[$id]['dependencies']) {
+            foreach ($this->services[$id]['dependencies'] as $service) {
+                $dependencies[] = $this->get($service);
+            }
+
+            return $this->instantiate($id, $dependencies);
         }
 
-        return new $this->services[$id]['class'](...$dependencies);
+        if (($constructor = (new ReflectionClass($this->className($id)))->getConstructor()) &&
+            ($parameters = $constructor->getParameters())
+        ) {
+            foreach ($parameters as $parameter) {
+                if ($type = $parameter->getType()) {
+                    $dependencies[] = $this->get($type);
+                }
+            }
+        }
+
+        return $this->instantiate($id, $dependencies);
     }
 
     /**
@@ -66,5 +82,17 @@ class Container implements ContainerInterface, FrameworkContainerInterface
     public function has(string $id): bool
     {
         return isset($this->services[$id]);
+    }
+
+    private function instantiate(string $id, array $dependencies): object
+    {
+        $className = $this->className($id);
+
+        return new $className(...$dependencies);
+    }
+
+    private function className(string $id): string
+    {
+        return $this->services[$id]['class'];
     }
 }
