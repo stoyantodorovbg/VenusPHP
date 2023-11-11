@@ -9,7 +9,8 @@ class Framework extends Config
         return [
             'hasTemplateEngine' => env('HAS_TEMPLATE_ENGINE', 1),
             'templateEngine'    => env('TEMPLATE_ENGINE', 'Smarty'),
-            'debug'             => env('DEBUG', 0)
+            'debug'             => env('DEBUG', 0),
+            'envMode'           => env('ENV_MODE', 'local'),
         ];
     }
 }

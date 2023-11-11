@@ -27,3 +27,13 @@ function templatesPath(string $path = '', bool $isDirectory = false): string
 
     return $path;
 }
+
+function logsPath(string $path = '', bool $isDirectory = false): string
+{
+    $path = basePath() . 'logs' . DIRECTORY_SEPARATOR . $path;
+    if ($isDirectory) {
+        $path .= DIRECTORY_SEPARATOR;
+    }
+
+    return $path;
+}
