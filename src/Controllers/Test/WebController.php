@@ -11,7 +11,15 @@ use StoyanTodorov\Core\Services\Test\TestService;
 
 class WebController
 {
-    public function test()
+    public function __construct(
+        protected DependencyDependencyServiceInterface $dependency1,
+        protected DependencyServiceInterface $dependency2,
+        protected TestServiceInterface $dependency3,
+    )
+    {
+    }
+
+    public function test(): void
     {
         instance(DependencyDependencyServiceInterface::class);
         instance(DependencyServiceInterface::class);
@@ -34,7 +42,11 @@ class WebController
         ]);
     }
 
-    public function test1()
+    public function test1(
+        DependencyDependencyServiceInterface $dependency1,
+        DependencyServiceInterface $dependency2,
+        TestServiceInterface $dependency3,
+    ): void
     {
         renderTemplate('test', [
             'title'  => 'Test Title',

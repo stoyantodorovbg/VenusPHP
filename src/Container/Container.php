@@ -3,11 +3,12 @@
 namespace StoyanTodorov\Core\Container;
 
 use Psr\Container\ContainerInterface;
-use ReflectionClass;
 use ReflectionException;
 use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\Container\Exceptions\ServiceNotFoundException;
 use StoyanTodorov\Core\Infrastructure\Singleton;
+use StoyanTodorov\Core\Services\Resolve\Resolver;
+use StoyanTodorov\Core\Services\Resolve\ResolverInterface;
 
 class Container implements ContainerInterface, FrameworkContainerInterface
 {
@@ -15,6 +16,7 @@ class Container implements ContainerInterface, FrameworkContainerInterface
 
     private array $services = [];
 
+    protected ResolverInterface|null $resolver = null;
 
     /**
      * @throws ContainerException
@@ -49,7 +51,7 @@ class Container implements ContainerInterface, FrameworkContainerInterface
     public function get(string $id)
     {
         if (! $this->has($id)) {
-            return new $id(...$this->getClassDependencies($id));
+            return $this->getResolver()->instantiate($id);
         }
 
         if ($this->services[$id]['dependencies']) {
@@ -58,10 +60,10 @@ class Container implements ContainerInterface, FrameworkContainerInterface
                 $dependencies[] = $this->get($service);
             }
 
-            return $this->instantiate($id, $dependencies);
+            return $this->getResolver()->instantiate($this->className($id), $dependencies);
         }
 
-        return $this->instantiate($id, $this->getClassDependencies($this->className($id)));
+        return $this->getResolver()->instantiate($this->className($id));
     }
 
     /**
@@ -73,36 +75,17 @@ class Container implements ContainerInterface, FrameworkContainerInterface
         return isset($this->services[$id]);
     }
 
-    private function instantiate(string $id, array $dependencies): object
-    {
-        $className = $this->className($id);
-
-        return new $className(...$dependencies);
-    }
-
     private function className(string $id): string
     {
         return $this->services[$id]['class'];
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    private function getClassDependencies(string $className): array
+    protected function getResolver(): ResolverInterface
     {
-        if (! ($constructor = (new ReflectionClass($className))->getConstructor()) ||
-            ! ($parameters = $constructor->getParameters())
-        ) {
-            return [];
+        if (! $this->resolver) {
+            $this->resolver = new Resolver();
         }
 
-        $dependencies = [];
-        foreach ($parameters as $parameter) {
-            if ($type = $parameter->getType()) {
-                $dependencies[] = $this->get($type);
-            }
-        }
-
-        return $dependencies;
+        return $this->resolver;
     }
 }

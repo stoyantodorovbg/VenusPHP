@@ -2,12 +2,16 @@
 
 namespace StoyanTodorov\Core\Services\Routes;
 
+use StoyanTodorov\Core\Services\Resolve\ResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class Router
 {
     protected array $config;
+
+    public function __construct(protected ResolverInterface $resolver)
+    {
+    }
 
     public function match(Request $request): bool
     {
@@ -18,10 +22,7 @@ abstract class Router
         }
 
         $controllerConfig = $this->config[$request->getMethod()][$request->getPathInfo()];
-        $controller = $controllerConfig[0];
-        $method = $controllerConfig[1];
-
-        (new $controller)->$method();
+        $this->resolver->instantiateAndCallMethod($controllerConfig[0], $controllerConfig[1]);
 
         return true;
     }
