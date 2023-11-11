@@ -4,6 +4,7 @@ namespace StoyanTodorov\Core\Container;
 
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use ReflectionException;
 use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\Container\Exceptions\ServiceNotFoundException;
 use StoyanTodorov\Core\Infrastructure\Singleton;
@@ -43,18 +44,16 @@ class Container implements ContainerInterface, FrameworkContainerInterface
     /**
      * @param string $id
      * @return mixed
-     * @throws ServiceNotFoundException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function get(string $id)
     {
         if (! $this->has($id)) {
-            throw new ServiceNotFoundException('Unknown service ' . $id);
+            return new $id(...$this->getClassDependencies($id));
         }
 
-        $dependencies = [];
-
         if ($this->services[$id]['dependencies']) {
+            $dependencies = [];
             foreach ($this->services[$id]['dependencies'] as $service) {
                 $dependencies[] = $this->get($service);
             }
@@ -62,17 +61,7 @@ class Container implements ContainerInterface, FrameworkContainerInterface
             return $this->instantiate($id, $dependencies);
         }
 
-        if (($constructor = (new ReflectionClass($this->className($id)))->getConstructor()) &&
-            ($parameters = $constructor->getParameters())
-        ) {
-            foreach ($parameters as $parameter) {
-                if ($type = $parameter->getType()) {
-                    $dependencies[] = $this->get($type);
-                }
-            }
-        }
-
-        return $this->instantiate($id, $dependencies);
+        return $this->instantiate($id, $this->getClassDependencies($this->className($id)));
     }
 
     /**
@@ -94,5 +83,26 @@ class Container implements ContainerInterface, FrameworkContainerInterface
     private function className(string $id): string
     {
         return $this->services[$id]['class'];
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function getClassDependencies(string $className): array
+    {
+        if (! ($constructor = (new ReflectionClass($className))->getConstructor()) ||
+            ! ($parameters = $constructor->getParameters())
+        ) {
+            return [];
+        }
+
+        $dependencies = [];
+        foreach ($parameters as $parameter) {
+            if ($type = $parameter->getType()) {
+                $dependencies[] = $this->get($type);
+            }
+        }
+
+        return $dependencies;
     }
 }
