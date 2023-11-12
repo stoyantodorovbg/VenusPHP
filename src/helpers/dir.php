@@ -17,8 +17,7 @@ function path(string $path = '', bool $isDirectory = false): string
 
 function templatesPath(string $path = '', bool $isDirectory = false): string
 {
-    $path = basePath() .
-        strtolower(config('framework-conf', ['templateEngine'])) .
+    $path = basePath() . config('framework-conf', ['templateEngine']) .
         DIRECTORY_SEPARATOR .
         $path;
     if ($isDirectory) {

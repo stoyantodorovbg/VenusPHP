@@ -2,16 +2,16 @@
 
 namespace StoyanTodorov\Core\Services\TemplateEngine;
 
+use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineServiceInterface;
 use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineInterface;
-use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateServiceInterface;
 
-class TemplateService implements TemplateServiceInterface
+class TemplateEngineService implements TemplateEngineServiceInterface
 {
     public function __construct(protected TemplateEngineInterface $templateEngine)
     {
     }
 
-    public function getTemplateEngine(): TemplateEngineInterface
+    public function setup(): TemplateEngineInterface
     {
         return $this->templateEngine->setup();
     }

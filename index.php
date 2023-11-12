@@ -3,13 +3,22 @@
 require __DIR__.'/vendor/autoload.php';
 
 use StoyanTodorov\Core\Bootstrapper;
-use StoyanTodorov\Core\Controllers\ErrorsController;
+use StoyanTodorov\Core\Exceptions\ApiRouteException;
+use StoyanTodorov\Core\Exceptions\TemplateRouteException;
+use StoyanTodorov\Core\Services\Handler\Exceptions\ApiExceptionHandler;
+use StoyanTodorov\Core\Services\Handler\Exceptions\ExceptionHandler;
+use StoyanTodorov\Core\Services\Handler\Exceptions\TemplateExceptionHandler;
+use Symfony\Component\HttpFoundation\Response;
 
 try {
-    (new Bootstrapper(httpKernel(), 'http'))->bootstrap();
+    $response = (new Bootstrapper(httpKernel(), 'http'))->bootstrap();
+    if ($response instanceof Response) {
+        $response->send();
+    };
+} catch (TemplateRouteException $e)  {
+    (new TemplateExceptionHandler())->handle($e);
+} catch (ApiRouteException $e)  {
+    (new ApiExceptionHandler())->handle($e);
 } catch (Throwable $e) {
-    l($e->getMessage(), $e->getTrace(), 'error');
-    config('framework-conf', ['debug']) ?
-        throw $e :
-        (new ErrorsController())->errorPage(500);
+    (new ExceptionHandler())->handle($e);
 }

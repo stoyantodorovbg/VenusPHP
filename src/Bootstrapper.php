@@ -3,6 +3,7 @@
 namespace StoyanTodorov\Core;
 
 use StoyanTodorov\Core\Kernel\KernelInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class Bootstrapper
 {
@@ -13,20 +14,23 @@ class Bootstrapper
     {
     }
 
-    public function bootstrap(): void
+    public function bootstrap(): Response|null
     {
         $this->kernel->addBinders();
         $this->kernel->registerBinders();
         $mode = $this->mode;
-        $this->$mode();
+
+        return $this->$mode();
     }
 
-    private function http() :void
+    private function http(): Response|null
     {
         if (config('framework-conf', ['hasTemplateEngine'])) {
-            $this->kernel->setTemplateEngine(instance('template-service')->getTemplateEngine());
+            $templateEngine = instance(config('framework-conf', ['templateEngine']) . '-template-service')->setup();
+            $this->kernel->setTemplateEngine($templateEngine);
         }
-        $this->kernel->handleRequest();
+
+        return $this->kernel->handleRequest();
     }
 
     private function console(): void

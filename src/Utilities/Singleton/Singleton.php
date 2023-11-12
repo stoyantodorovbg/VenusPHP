@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Infrastructure;
+namespace StoyanTodorov\Core\Utilities\Singleton;
 
 trait Singleton
 {

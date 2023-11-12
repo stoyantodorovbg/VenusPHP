@@ -1,6 +1,6 @@
 <?php
 
-use StoyanTodorov\Core\Services\Logs\LoggerServiceInterface;
+use StoyanTodorov\Core\Services\Log\LoggerServiceInterface;
 
 function loggerService(): LoggerServiceInterface
 {

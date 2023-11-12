@@ -10,9 +10,9 @@ interface HttpKernelInterface
     /**
      * Handle HTTP request
      *
-     * @return Response
+     * @return Response|bool|null
      */
-    public function handleRequest();
+    public function handleRequest(): Response|bool|null;
 
     /**
      * Get template instance

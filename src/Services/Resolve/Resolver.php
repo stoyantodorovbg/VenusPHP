@@ -9,6 +9,9 @@ use StoyanTodorov\Core\Container\Container;
 class Resolver implements ResolverInterface
 {
     protected Container $container;
+    protected array $predefined = [
+        'null', 'bool', 'string', 'int', 'float', 'array', 'object', 'iterable', 'traversable'
+    ];
 
     public function __construct()
     {
@@ -79,7 +82,7 @@ class Resolver implements ResolverInterface
     {
         $dependencies = [];
         foreach ($parameters as $parameter) {
-            if ($type = $parameter->getType()) {
+            if (($type = $parameter->getType()) && ! in_array($type, $this->predefined)) {
                 $dependencies[] = $this->container->get($type);
             }
         }

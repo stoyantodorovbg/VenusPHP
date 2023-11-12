@@ -6,9 +6,9 @@ use Psr\Container\ContainerInterface;
 use ReflectionException;
 use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\Container\Exceptions\ServiceNotFoundException;
-use StoyanTodorov\Core\Infrastructure\Singleton;
 use StoyanTodorov\Core\Services\Resolve\Resolver;
 use StoyanTodorov\Core\Services\Resolve\ResolverInterface;
+use StoyanTodorov\Core\Utilities\Singleton\Singleton;
 
 class Container implements ContainerInterface, FrameworkContainerInterface
 {
