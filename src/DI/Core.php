@@ -4,8 +4,14 @@ namespace StoyanTodorov\Core\DI;
 
 use StoyanTodorov\Core\Services\Handler\HttpRequestHandler;
 use StoyanTodorov\Core\Services\Handler\Interfaces\HttpRequestHandlerInterface;
+use StoyanTodorov\Core\Services\Http\Request\Request;
+use StoyanTodorov\Core\Services\Http\Request\RequestInterface;
 use StoyanTodorov\Core\Services\Http\Response\Factories\JsonResponseFactory;
 use StoyanTodorov\Core\Services\Http\Response\ResponseService;
+use StoyanTodorov\Core\Services\Http\Route\Factories\RouteFactory;
+use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteFactoryInterface;
+use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteServiceInterface;
+use StoyanTodorov\Core\Services\Http\Route\RouteService;
 use StoyanTodorov\Core\Services\Log\LoggerService;
 use StoyanTodorov\Core\Services\Log\LoggerServiceInterface;
 use StoyanTodorov\Core\Services\Resolve\Resolver;
@@ -30,5 +36,8 @@ class Core extends Binder
         ['json-response-service', ResponseService::class, ['json-response-factory']],
         [HttpRequestHandlerInterface::class, HttpRequestHandler::class],
         [SingletonInstanceInterface::class, SingletonInstance::class],
+        [RouteServiceInterface::class, RouteService::class],
+        [RequestInterface::class, Request::class],
+        [RouteFactoryInterface::class, RouteFactory::class],
     ];
 }

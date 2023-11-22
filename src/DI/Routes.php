@@ -2,8 +2,8 @@
 
 namespace StoyanTodorov\Core\DI;
 
-use StoyanTodorov\Core\Services\Http\Route\Api;
-use StoyanTodorov\Core\Services\Http\Route\Web;
+use StoyanTodorov\Core\Services\Http\Route\Config\Api;
+use StoyanTodorov\Core\Services\Http\Route\Config\Web;
 
 class Routes extends Binder
 {

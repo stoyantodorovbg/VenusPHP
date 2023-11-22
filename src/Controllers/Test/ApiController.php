@@ -3,9 +3,6 @@
 namespace StoyanTodorov\Core\Controllers\Test;
 
 use StoyanTodorov\Core\Controllers\AbstractApiController;
-use StoyanTodorov\Core\Services\Test\Interfaces\DependencyDependencyServiceInterface;
-use StoyanTodorov\Core\Services\Test\Interfaces\DependencyServiceInterface;
-use StoyanTodorov\Core\Services\Test\Interfaces\TestServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiController extends AbstractApiController

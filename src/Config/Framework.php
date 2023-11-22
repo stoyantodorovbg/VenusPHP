@@ -17,7 +17,8 @@ class Framework extends Config
                 404 => 'PAGE NOT FOUND',
                 429 => 'TOO MANY REQUESTS',
                 500 => 'INTERNAL SERVER ERROR',
-            ]
+            ],
+            'host'              => env('HOST',  host())
         ];
     }
 }

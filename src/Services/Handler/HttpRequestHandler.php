@@ -8,23 +8,21 @@ use StoyanTodorov\Core\Controllers\TemplateErrorsController;
 use StoyanTodorov\Core\Exceptions\ApiRouteException;
 use StoyanTodorov\Core\Exceptions\TemplateRouteException;
 use StoyanTodorov\Core\Services\Handler\Interfaces\HttpRequestHandlerInterface;
-use StoyanTodorov\Core\Services\Http\Route\Api;
-use StoyanTodorov\Core\Services\Http\Route\Web;
+use StoyanTodorov\Core\Services\Http\Request\RequestInterface;
+use StoyanTodorov\Core\Services\Http\Route\Config\Api;
+use StoyanTodorov\Core\Services\Http\Route\Config\Web;
+use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class HttpRequestHandler implements HttpRequestHandlerInterface
 {
-    protected ContainerInterface $container;
-
-    public function __construct()
+    public function __construct(
+        protected RequestInterface $request,
+        protected RouteServiceInterface $routeService,
+    )
     {
-        $this->container = Container::getInstance();
     }
-
-    private array $routers = [
-        'web-router', 'api-router',
-    ];
 
     private array $routerExceptionMap = [
         Web::class => TemplateRouteException::class,
@@ -33,12 +31,9 @@ class HttpRequestHandler implements HttpRequestHandlerInterface
 
     public function handle(): Response|bool|null
     {
-        $request = Request::createFromGlobals();
-        foreach ($this->routers as $routerKey) {
+        foreach ($this->routeService->getRouters() as $router) {
             try {
-                $router = $this->container->get($routerKey);
-
-                if (($response = $router->match($request)) !== false) {
+                if ($response = $router->getResponse($this->request->method(), $this->request->path())) {
                     return $response;
                 }
             } catch (\Throwable $e) {

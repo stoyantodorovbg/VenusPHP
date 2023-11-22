@@ -6,3 +6,5 @@
         <li>no cities found</li>
     {/foreach}
 </ul>
+
+<a href="{'web-test-test'|urlById}">Link</a>

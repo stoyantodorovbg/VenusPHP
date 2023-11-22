@@ -14,7 +14,7 @@ class Bootstrapper
     {
     }
 
-    public function bootstrap(): Response|null
+    public function bootstrap(): Response|bool|null
     {
         $this->kernel->addBinders();
         $this->kernel->registerBinders();
@@ -23,7 +23,7 @@ class Bootstrapper
         return $this->$mode();
     }
 
-    private function http(): Response|null
+    private function http(): Response|bool|null
     {
         if (config('framework-conf', ['hasTemplateEngine'])) {
             $templateEngine = instance(config('framework-conf', ['templateEngine']) . '-template-service')->setup();
