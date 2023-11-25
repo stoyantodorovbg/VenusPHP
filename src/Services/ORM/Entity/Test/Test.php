@@ -3,9 +3,9 @@
 namespace StoyanTodorov\Core\Services\ORM\Entity\Test;
 
 use Carbon\Carbon;
-use StoyanTodorov\Core\Services\ORM\Entity\BaseEntity;
+use StoyanTodorov\Core\Services\ORM\Entity\Entity;
 
-class Test extends BaseEntity
+class Test extends Entity
 {
     public function __construct(
         public int             $id,

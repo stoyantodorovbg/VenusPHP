@@ -8,5 +8,4 @@ class Mysql
 {
     protected string $connectionId = 'mysql';
 
-    public function find()
 }

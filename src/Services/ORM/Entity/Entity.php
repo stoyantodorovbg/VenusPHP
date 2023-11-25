@@ -4,8 +4,9 @@ namespace StoyanTodorov\Core\Services\ORM\Entity;
 
 use ReflectionClass;
 
-class BaseEntity implements EntityInterface
+class Entity implements EntityInterface
 {
+    protected static string $primaryKey = 'id';
     protected static bool $trackDates = true;
     protected static array $defaultParseConfig = [
         'fromRaw' => [
@@ -23,21 +24,6 @@ class BaseEntity implements EntityInterface
         'carbon' => 'string',
         'bool'   => 'int',
     ];
-
-    public static function toRawConfig(): array
-    {
-        $output = self::$parseConfig;
-        foreach($output as $property => $config) {
-            $output[$property] = array_reverse($config);
-            foreach ($config as $key => $type) {
-                if (isset(self::$convertToRawMap[$type])) {
-                    $output[$property][$key] = self::$convertToRawMap[$type];
-                }
-            }
-        }
-
-        return $output;
-    }
 
     public function __get(string $property): mixed
     {
