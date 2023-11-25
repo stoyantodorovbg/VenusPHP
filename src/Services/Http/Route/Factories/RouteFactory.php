@@ -19,7 +19,7 @@ class RouteFactory implements RouteFactoryInterface
             url: $url,
             controller: $controller,
             controllerMethod: $controllerMethod,
-            httpMethod: $httpMethod = HttpMethod::GET,
+            httpMethod: $httpMethod,
             id: $id,
         );
     }

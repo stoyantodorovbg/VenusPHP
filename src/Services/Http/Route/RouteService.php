@@ -6,6 +6,7 @@ use Psr\Container\ContainerInterface;
 use StoyanTodorov\Core\Container\Container;
 use StoyanTodorov\Core\Exceptions\RouteNotFoundException;
 use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteFactoryInterface;
+use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouterInterface;
 use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteServiceInterface;
 
 class RouteService implements RouteServiceInterface
@@ -56,7 +57,7 @@ class RouteService implements RouteServiceInterface
                 foreach ($configs as $path => $config) {
                     if (isset($config[2]) && $config[2] === $id) {
                         return $this->routeFactory->create(
-                            url: $router->getPrefix() . $path,
+                            url: $this->url($router, $path),
                             controller: $config[0],
                             controllerMethod: $config[1],
                             httpMethod: HttpMethod::create($method),
@@ -77,13 +78,12 @@ class RouteService implements RouteServiceInterface
         $method = $this->httpMethod($method);
         $routers = $routers ?? $this->getRouters();
         foreach ($routers as $router) {
-            if ($config = $router->getConfig($method, $path)) {
+            if ($config = $router->getRouteConfig($method, $path)) {
                 return $this->routeFactory->create(
-                    url: $path,
+                    url: $this->url($router, $path),
                     controller: $config[0],
                     controllerMethod: $config[1],
                     httpMethod: $method,
-                    prefix: $config[2] :: null,
                 );
             }
         }
@@ -94,5 +94,10 @@ class RouteService implements RouteServiceInterface
     private function httpMethod(HttpMethod|string $method): HttpMethod|null
     {
         return is_string($method) ? HttpMethod::create($method) : $method;
+    }
+
+    private function url(RouterInterface $router, string $path): string
+    {
+        return '/' . $router->getPrefix() . $path;
     }
 }

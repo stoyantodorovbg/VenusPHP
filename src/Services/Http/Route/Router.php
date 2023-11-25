@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Router implements RouterInterface
 {
     protected array $config;
-    protected string $prefix = '/';
+    protected string $prefix = '';
 
     public function __construct(protected ResolverInterface $resolver)
     {
@@ -27,7 +27,7 @@ abstract class Router implements RouterInterface
         return true;
     }
 
-    public function getConfig(string $httpMethod, string $path): array|null
+    public function getRouteConfig(string $httpMethod, string $path): array|null
     {
         if ($this->match($httpMethod, $path)) {
             return $this->config[$httpMethod][$this->pathKey($path)];
@@ -38,6 +38,8 @@ abstract class Router implements RouterInterface
 
     public function getResponse(string $httpMethod, string $path): Response|bool|null
     {
+        $path = ltrim($path, '/');
+
         if ($this->match($httpMethod, $path)) {
             $controllerConfig = $this->config[$httpMethod][$this->pathKey($path)];
 
