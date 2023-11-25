@@ -4,7 +4,6 @@ namespace StoyanTodorov\Core\Services\ORM\Mapper;
 
 use StoyanTodorov\Core\Services\ORM\Adapter\ORMAdapter;
 use StoyanTodorov\Core\Services\ORM\Converter\Interfaces\EntityConverterInterface;
-use StoyanTodorov\Core\Services\ORM\Entity\Entity;
 use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 
 abstract class Mapper
