@@ -2,14 +2,14 @@
 
 namespace StoyanTodorov\Core\Services\ORM\Mapper;
 
-use StoyanTodorov\Core\Services\ORM\Adapter\ORMAdapter;
+use StoyanTodorov\Core\Services\DB\Adapter\DBAdapter;
 use StoyanTodorov\Core\Services\ORM\Converter\Interfaces\EntityConverterInterface;
 use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 
 abstract class Mapper implements MapperInterface
 {
     protected EntityConverterInterface $converter;
-    protected ORMAdapter $adapter;
+    protected DBAdapter $adapter;
 
     public function __construct(protected string $entity, protected string|null $connection = null)
     {

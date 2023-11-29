@@ -10,6 +10,9 @@ class DB extends Config
     protected function data(): array
     {
         return [
+            'migrations' => [
+
+            ],
             'mysql' => [
                 'host'     => env('DB_HOST', '127.0.0.1'),
                 'port'     => env('DB_PORT', '3306'),
@@ -17,7 +20,8 @@ class DB extends Config
                 'password' => env('DB_PASSWORD', ''),
                 'database' => env('DB_NAME', 'venus'),
                 'driver'   => DBDriver::MYSQL,
-            ]
+            ],
+            'defaultConnection' => 'mysql',
         ];
     }
 }

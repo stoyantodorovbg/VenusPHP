@@ -1,12 +1,12 @@
 <?php
 
-namespace StoyanTodorov\Core\Services\ORM\Adapter;
+namespace StoyanTodorov\Core\Services\DB\Adapter;
 
 use StoyanTodorov\Core\Services\DB\Connector\DBConnector;
 use StoyanTodorov\Core\Services\DB\Connector\DBConnectorInterface;
 use StoyanTodorov\Core\Utilities\Singleton\SingletonInstanceInterface;
 
-abstract class ORMAdapter
+abstract class DBAdapter
 {
     protected DBConnectorInterface $dbConnector;
     protected string $connectionId;

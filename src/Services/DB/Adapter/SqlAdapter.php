@@ -1,9 +1,17 @@
 <?php
 
-namespace StoyanTodorov\Core\Services\ORM\Adapter;
+namespace StoyanTodorov\Core\Services\DB\Adapter;
 
-abstract class SqlAdapter extends ORMAdapter
+abstract class SqlAdapter extends DBAdapter
 {
+    /**
+     * Execute a not prepared statement
+     *
+     * @param string $statement
+     * @return array
+     */
+    abstract public function exec(string $statement): array;
+
     /**
      * Select data
      *

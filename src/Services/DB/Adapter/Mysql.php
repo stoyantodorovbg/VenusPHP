@@ -1,6 +1,8 @@
 <?php
 
-namespace StoyanTodorov\Core\Services\ORM\Adapter;
+namespace StoyanTodorov\Core\Services\DB\Adapter;
+
+use PDO;
 
 class Mysql extends SqlAdapter
 {
@@ -15,6 +17,13 @@ class Mysql extends SqlAdapter
         return array_key_exists('insert', $data) ? $connection->lastInsertId() : $output;
     }
 
+    public function exec(string $statement): array
+    {
+        $connection = $this->connect()->exec($statement);
+
+        return $connection->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     protected function prepareQuery(array $data): string
     {
         $query = '';
@@ -27,7 +36,9 @@ class Mysql extends SqlAdapter
 
     protected function execute(object $connection, array $values = []): array|null
     {
-        return $connection->execute($values);
+        $connection->execute($values);
+
+        return $connection->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function select(string $table, array $columns): string
