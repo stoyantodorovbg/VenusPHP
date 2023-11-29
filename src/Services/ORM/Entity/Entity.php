@@ -5,6 +5,7 @@ namespace StoyanTodorov\Core\Services\ORM\Entity;
 use Exception;
 use ReflectionClass;
 use ReflectionProperty;
+use StoyanTodorov\Core\Services\ORM\Mapper\MapperInterface;
 use StoyanTodorov\Core\Services\String\Interfaces\StringConverterInterface;
 
 class Entity implements EntityInterface
@@ -98,6 +99,11 @@ class Entity implements EntityInterface
     {
         $this->accessProperty($property);
         $this->$property = $value;
+    }
+
+    public static function mapper(string|null $connection = null): MapperInterface
+    {
+        return instance(self::connection, [self::class, $connection]);
     }
 
     public static function primaryKey(): string

@@ -5,7 +5,7 @@ namespace StoyanTodorov\Core\Services\ORM\Mapper;
 use Exception;
 use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 
-abstract class MysqlMapper extends Mapper
+class MysqlMapper extends Mapper
 {
     protected string $entity;
     protected string $table;
