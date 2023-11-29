@@ -11,87 +11,19 @@ abstract class ORMAdapter
     protected DBConnectorInterface $dbConnector;
     protected string $connectionId;
 
-    public function __construct(SingletonInstanceInterface $singletonInstance)
+    public function __construct()
     {
-        $this->dbConnector = $singletonInstance->instance(DBConnector::class);
+        $this->dbConnector = instance(SingletonInstanceInterface::class)->instance(DBConnector::class);
     }
-
-    /**
-     * Initialize a query
-     *
-     * @return object
-     */
-    abstract public function getQuery(): object;
-
-    /**
-     * Where query
-     *
-     * @param object $query
-     * @param array  $criteria
-     * @return object
-     */
-    abstract public function where(object $query, array $criteria): object;
-
-    /**
-     * Order by query
-     *
-     * @param object $query
-     * @param array  $orderBy
-     * @return object
-     */
-    abstract public function orderBy(object $query, array $orderBy): object;
-
-    /**
-     * Limit query
-     *
-     * @param object $query
-     * @param int    $limit
-     * @return object
-     */
-    abstract public function limit(object $query, int $limit): object;
-
-    /**
-     * Group by query
-     *
-     * @param object $query
-     * @param string $groupBy
-     * @return object
-     */
-    abstract public function groupBy(object $query, string $groupBy): object;
-
-    /**
-     * Create query
-     *
-     * @param object $query
-     * @param array  $data
-     * @return object
-     */
-    abstract public function create(object $query, array $data): object;
-
-    /**
-     * Update query
-     *
-     * @param object $query
-     * @param array  $data
-     * @return object
-     */
-    abstract public function update(object $query, array $data): object;
-
-    /**
-     * Delete query
-     *
-     * @param object $query
-     * @return object
-     */
-    abstract public function delete(object $query): object;
 
     /**
      * Execute a query
      *
-     * @param object $query
-     * @return array|null
+     * @param array $data
+     * @param array $values
+     * @return array|int|string|null
      */
-    abstract public function execute(object $query): array|null;
+    abstract public function query(array $data, array $values): array|int|string|null;
 
     public function changeConnection(string $id): void
     {
@@ -102,4 +34,21 @@ abstract class ORMAdapter
     {
         return $this->dbConnector->connect($this->connectionId);
     }
+
+    /**
+     * Execute a query
+     *
+     * @param object $connection
+     * @param array  $values
+     * @return array|null
+     */
+    abstract protected function execute(object $connection, array $values): array|null;
+
+    /**
+     * Prepare a query
+     *
+     * @param array $data
+     * @return string
+     */
+    abstract protected function prepareQuery(array $data): string;
 }

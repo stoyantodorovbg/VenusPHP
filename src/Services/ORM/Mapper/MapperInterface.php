@@ -28,15 +28,15 @@ interface MapperInterface
      *
      * @param array       $criteria
      * @param array|null  $orderBy
+     * @param array|null $groupBy
      * @param int|null    $limit
-     * @param string|null $groupBy
      * @return array
      */
     public function findMany(
         array $criteria,
         array|null $orderBy = null,
+        array|null $groupBy =  null,
         int|null $limit = null,
-        string|null $groupBy =  null
     ): array;
 
     /**
@@ -44,18 +44,19 @@ interface MapperInterface
      *
      * @param array $data
      * @param bool  $save
-     * @return EntityInterface
+     * @param bool  $fetch
+     * @return EntityInterface|null
      */
-    public function createOne(array $data, bool $save = true): EntityInterface;
+    public function createOne(array $data, bool $save = true, bool $fetch = true): EntityInterface|null;
 
     /**
      * Create many
      *
      * @param array $data
      * @param bool  $save
-     * @return array
+     * @return array|null
      */
-    public function createMany(array $data, bool $save = true): array;
+    public function createMany(array $data, bool $save = true): array|null;
 
     /**
      * Update given entity
@@ -63,19 +64,10 @@ interface MapperInterface
      * @param EntityInterface $entity
      * @param array           $data
      * @param bool            $save
-     * @return EntityInterface
+     * @param bool            $fetch
+     * @return EntityInterface|null
      */
-    public function updateEntity(EntityInterface $entity, array $data, bool $save = true): EntityInterface;
-
-    /**
-     * Update entities
-     *
-     * @param array $entities
-     * @param array $data
-     * @param bool  $save
-     * @return array
-     */
-    public function updateEntities(array $entities, array $data, bool $save = true): array;
+    public function updateEntity(EntityInterface $entity, array $data, bool $save = true, bool $fetch = true): EntityInterface|null;
 
     /**
      * Update one by primary key
@@ -83,9 +75,10 @@ interface MapperInterface
      * @param string|int $primary
      * @param array      $data
      * @param bool       $save
-     * @return EntityInterface
+     * @param bool       $fetch
+     * @return EntityInterface|null
      */
-    public function updateByPrimary(string|int $primary, array $data, bool $save = true): EntityInterface;
+    public function updateByPrimary(string|int $primary, array $data, bool $save = true, bool $fetch = true): EntityInterface|null;
 
     /**
      * Update one by criteria
@@ -93,9 +86,10 @@ interface MapperInterface
      * @param array $criteria
      * @param array $data
      * @param bool  $save
-     * @return EntityInterface
+     * @param bool  $fetch
+     * @return EntityInterface|null
      */
-    public function updateOne(array $criteria, array $data, bool $save = true): EntityInterface;
+    public function updateOne(array $criteria, array $data, bool $save = true, bool $fetch = true): EntityInterface|null;
 
     /**
      * Update many by criteria
@@ -134,18 +128,18 @@ interface MapperInterface
     /**
      * Delete many by criteria
      *
-     * @param array $criteria
+     * @param array    $criteria
+     * @param int|null $limit
      * @return void
      */
-    public function deleteMany(array $criteria): void;
+    public function deleteMany(array $criteria, int|null $limit = null): void;
 
     /**
      * Update when find one by criteria or create new one
      *
      * @param array $criteria
      * @param array $data
-     * @param bool  $save
      * @return EntityInterface
      */
-    public function updateOrCreate(array $criteria, array $data, bool $save = true): EntityInterface;
+    public function updateOrCreate(array $criteria, array $data): EntityInterface;
 }

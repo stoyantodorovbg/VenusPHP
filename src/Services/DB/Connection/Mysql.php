@@ -24,5 +24,6 @@ class Mysql implements ConnectionInterface
             username: $config['user'],
             password: $config['password']
         );
+        $this->instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 }
