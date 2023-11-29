@@ -2,19 +2,22 @@
 
 namespace StoyanTodorov\Core\Services\ORM\Mapper;
 
-use StoyanTodorov\Core\Services\DB\Adapter\DBAdapter;
+use StoyanTodorov\Core\Services\DB\Query\PreparedQueryInterface;
 use StoyanTodorov\Core\Services\ORM\Converter\Interfaces\EntityConverterInterface;
 use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 
 abstract class Mapper implements MapperInterface
 {
     protected EntityConverterInterface $converter;
-    protected DBAdapter $adapter;
+    protected PreparedQueryInterface $preparedQuery;
 
     public function __construct(protected string $entity, protected string|null $connection = null)
     {
         $this->converter = instance(EntityConverterInterface::class);
-        $this->adapter = instance($this->connection ?? $entity::connection());
+        $this->preparedQuery = instance(PreparedQueryInterface::class, [
+            $this->connection ?? $entity::connection(),
+            $entity::table(),
+        ]);
     }
     
     /**

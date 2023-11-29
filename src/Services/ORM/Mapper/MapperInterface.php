@@ -32,12 +32,7 @@ interface MapperInterface
      * @param int|null    $limit
      * @return array
      */
-    public function findMany(
-        array $criteria,
-        array|null $orderBy = null,
-        array|null $groupBy =  null,
-        int|null $limit = null,
-    ): array;
+    public function findMany(array $criteria, array|null $orderBy = null, array|null $groupBy = null, int|null $limit = null): array;
 
     /**
      * Create one
@@ -97,9 +92,9 @@ interface MapperInterface
      * @param array $criteria
      * @param       $data
      * @param bool  $save
-     * @return array
+     * @return array|null
      */
-    public function updateMany(array $criteria, $data, bool $save = true): array;
+    public function updateMany(array $criteria, $data, bool $save = true): array|null;
 
     /**
      * Delete entity

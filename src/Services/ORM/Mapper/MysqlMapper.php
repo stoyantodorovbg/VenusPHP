@@ -20,38 +20,21 @@ class MysqlMapper extends Mapper
 
     public function findByPrimary(string|int $primary): EntityInterface
     {
-        $queryData = [
-            'select' => [
-                'table' => $this->table,
-            ],
-            'where'  => [
-                [$this->primaryKey, '='],
-            ]
-        ];
-        $queryValues = [$primary];
-
-        $raw = $this->adapter->query($queryData, $queryValues);
+        $raw = $this->preparedQuery->findByPrimary($primary);
 
         return $this->getEntity($raw);
     }
 
     public function findOne(array $criteria, array|null $orderBy = null): EntityInterface
     {
-        $query = $this->findQuery(criteria: $criteria, orderBy: $orderBy);
-        $raw = $this->adapter->query($query['queryData'], $query['queryValues']);
+        $raw = $this->preparedQuery->findOne($criteria, $orderBy);
 
         return $this->getEntity($raw);
     }
 
-    public function findMany(
-        array $criteria,
-        array|null $orderBy = null,
-        array|null $groupBy =  null,
-        int|null $limit = null,
-    ): array
+    public function findMany(array $criteria, array|null $orderBy = null, array|null $groupBy = null, int|null $limit = null): array
     {
-        $query = $this->findQuery($criteria, $orderBy, $groupBy, $limit);
-        $raw = $this->adapter->query($query['queryData'], $query['queryValues']);
+        $raw = $this->preparedQuery->findMany($criteria, $orderBy, $groupBy, $limit);
 
         return $this->getEntities($raw);
     }
@@ -62,14 +45,7 @@ class MysqlMapper extends Mapper
             return $this->getEntity($data);
         }
 
-        $queryData = [
-            'insert' => [
-                'table'   => $this->table,
-                'columns' => array_keys($data),
-            ],
-        ];
-
-        $raw = $this->adapter->query($queryData, array_values($data));
+        $raw = $this->preparedQuery->createOne($data);
 
         return $fetch ? $this->findByPrimary($raw) : null;
     }
@@ -80,14 +56,7 @@ class MysqlMapper extends Mapper
             return $this->getEntities($data);
         }
 
-        $queryData = [
-            'insert' => [
-                'table'   => $this->table,
-                'columns' => $data['columns'],
-            ],
-        ];
-
-        $this->adapter->query($queryData, $data['values']);
+        $this->preparedQuery->createMany($data);
     }
 
     /**
@@ -116,17 +85,7 @@ class MysqlMapper extends Mapper
             return $this->updateEntityProperties($this->findByPrimary($primary), $data);
         }
 
-        $queryData = [
-            'update' => [
-                'table'   => $this->table,
-                'columns' => array_keys($data),
-            ],
-            'where'  => [$this->primaryKey, '='],
-        ];
-        $queryValues = array_values($data);
-        $queryValues[] = $primary;
-
-        $this->adapter->query($queryData, $queryValues);
+        $this->preparedQuery->updateByPrimary($primary, $data);
 
         if ($fetch) {
             return $this->findByPrimary($primary);
@@ -142,18 +101,7 @@ class MysqlMapper extends Mapper
             return $this->updateEntityProperties($this->findOne($criteria), $data);
         }
 
-        $queryData = [
-            'update' => [
-                'table'   => $this->table,
-                'columns' => array_keys($data),
-            ],
-            'where'  => [],
-            'limit'  => 1
-        ];
-        $queryValues = array_values($data);
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
-
-        $this->adapter->query($queryData, $queryValues);
+        $this->preparedQuery->updateOne($criteria, $data);
 
         if ($fetch) {
             return $this->findOne($criteria);
@@ -166,17 +114,7 @@ class MysqlMapper extends Mapper
             return array_map(fn($entity) => $this->updateEntityProperties($entity), $this->findMany($criteria));
         }
 
-        $queryData = [
-            'update' => [
-                'table'   => $this->table,
-                'columns' => $data['columns'],
-            ],
-            'where'  => [],
-        ];
-        $queryValues = $data['values'];
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
-
-        $this->adapter->query($queryData, $queryValues);
+        $this->updateMany($criteria, $data);
     }
 
     /**
@@ -189,18 +127,7 @@ class MysqlMapper extends Mapper
 
     public function deleteByPrimary(string|int $primary): void
     {
-        $queryData = [
-            'delete' => [
-                'table'   => $this->table,
-            ],
-            'where'  => [
-                [$this->primaryKey, '='],
-            ],
-            'limit' => 1,
-        ];
-        $queryValues = [$primary];
-
-        $this->adapter->query($queryData, $queryValues);
+        $this->preparedQuery->deleteByPrimary($primary);
     }
 
     public function deleteOne(array $criteria): void
@@ -210,19 +137,7 @@ class MysqlMapper extends Mapper
 
     public function deleteMany(array $criteria, int|null $limit = null): void
     {
-        $queryData = [
-            'delete' => [
-                'table'   => $this->table,
-            ],
-            'where'  => [],
-        ];
-        if ($limit !== null) {
-            $queryData['limit'] = $limit;
-        }
-        $queryValues = [];
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
-
-        $this->adapter->query($queryData, $queryValues);
+        $this->preparedQuery->deleteMany($criteria, $limit);
     }
 
     /**
@@ -253,36 +168,6 @@ class MysqlMapper extends Mapper
     protected function getRaw(EntityInterface $entity): array
     {
         return (array) $entity;
-    }
-
-    protected function findQuery(
-        array $criteria,
-        array|null $orderBy = null,
-        array|null $groupBy =  null,
-        int|null $limit = null,
-    ): array
-    {
-        $queryData = [
-            'select' => [
-                'table' => $this->table,
-            ],
-            'where'   => [],
-            'orderBy' => $orderBy,
-            'groupBy' => $groupBy,
-            'limit'   => $limit,
-        ];
-        $queryValues = [];
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
-
-        return compact('queryData', 'queryValues');
-    }
-
-    protected function whereByCriteriaQuery(array $criteria, array &$queryData, array &$queryValues): void
-    {
-        foreach ($criteria as $filter) {
-            $queryData['where'][] = [$filter[0], $filter[1]];
-            $queryValues[] = $filter[2];
-        }
     }
 
     /**
