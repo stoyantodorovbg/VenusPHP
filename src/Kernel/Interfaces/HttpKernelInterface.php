@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Kernel;
+namespace StoyanTodorov\Core\Kernel\Interfaces;
 
 use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineInterface;
 use Symfony\Component\HttpFoundation\Response;

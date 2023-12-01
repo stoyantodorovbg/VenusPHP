@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Controllers\Test;
+namespace StoyanTodorov\Core\HTTP\Controllers\Test;
 
 use StoyanTodorov\Core\Services\Test\DependencyDependencyService;
 use StoyanTodorov\Core\Services\Test\DependencyService;

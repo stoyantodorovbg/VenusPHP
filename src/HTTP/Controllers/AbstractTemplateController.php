@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Controllers;
+namespace StoyanTodorov\Core\HTTP\Controllers;
 
 use StoyanTodorov\Core\Kernel\HttpKernel;
 use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineInterface;

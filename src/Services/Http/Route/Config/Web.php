@@ -2,7 +2,7 @@
 
 namespace StoyanTodorov\Core\Services\Http\Route\Config;
 
-use StoyanTodorov\Core\Controllers\Test\WebController;
+use StoyanTodorov\Core\HTTP\Controllers\Test\WebController;
 use StoyanTodorov\Core\Services\Http\Route\HttpMethod;
 use StoyanTodorov\Core\Services\Http\Route\Router;
 

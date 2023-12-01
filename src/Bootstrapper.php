@@ -2,15 +2,12 @@
 
 namespace StoyanTodorov\Core;
 
-use StoyanTodorov\Core\Kernel\KernelInterface;
+use StoyanTodorov\Core\Kernel\Interfaces\KernelInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class Bootstrapper
+readonly class Bootstrapper
 {
-    public function __construct(
-        readonly private KernelInterface $kernel,
-        readonly private string $mode,
-    )
+    public function __construct(private KernelInterface $kernel)
     {
     }
 
@@ -18,7 +15,7 @@ class Bootstrapper
     {
         $this->kernel->addBinders();
         $this->kernel->registerBinders();
-        $mode = $this->mode;
+        $mode = $this->kernel->mode();
 
         return $this->$mode();
     }
@@ -35,6 +32,6 @@ class Bootstrapper
 
     private function console(): void
     {
-
+        $this->kernel->handle();
     }
 }

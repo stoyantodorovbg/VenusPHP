@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Kernel;
+namespace StoyanTodorov\Core\Kernel\Interfaces;
 
 interface KernelInterface
 {
@@ -17,4 +17,11 @@ interface KernelInterface
      * @return void
      */
     public function addBinders(): void;
+
+    /**
+     * Kernel mode
+     *
+     * @return string
+     */
+    public function mode(): string;
 }

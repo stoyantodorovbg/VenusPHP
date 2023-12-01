@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Controllers;
+namespace StoyanTodorov\Core\HTTP\Controllers;
 
 use StoyanTodorov\Core\Config\Framework;
 use Symfony\Component\HttpFoundation\Response;

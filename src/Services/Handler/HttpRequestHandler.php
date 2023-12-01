@@ -2,17 +2,14 @@
 
 namespace StoyanTodorov\Core\Services\Handler;
 
-use Psr\Container\ContainerInterface;
-use StoyanTodorov\Core\Container\Container;
-use StoyanTodorov\Core\Controllers\TemplateErrorsController;
 use StoyanTodorov\Core\Exceptions\ApiRouteException;
 use StoyanTodorov\Core\Exceptions\TemplateRouteException;
+use StoyanTodorov\Core\HTTP\Controllers\TemplateErrorsController;
 use StoyanTodorov\Core\Services\Handler\Interfaces\HttpRequestHandlerInterface;
 use StoyanTodorov\Core\Services\Http\Request\RequestInterface;
 use StoyanTodorov\Core\Services\Http\Route\Config\Api;
 use StoyanTodorov\Core\Services\Http\Route\Config\Web;
 use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteServiceInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class HttpRequestHandler implements HttpRequestHandlerInterface

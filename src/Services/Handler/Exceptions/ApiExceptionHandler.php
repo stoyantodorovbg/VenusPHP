@@ -2,7 +2,7 @@
 
 namespace StoyanTodorov\Core\Services\Handler\Exceptions;
 
-use StoyanTodorov\Core\Controllers\ApiErrorsController;
+use StoyanTodorov\Core\HTTP\Controllers\ApiErrorsController;
 use Throwable;
 
 class ApiExceptionHandler extends AbstractExceptionHandler

@@ -6,12 +6,14 @@ use Psr\Container\ContainerInterface;
 use StoyanTodorov\Core\Container\Container;
 use StoyanTodorov\Core\Container\Exceptions\ContainerException;
 use StoyanTodorov\Core\DI\Binder;
+use StoyanTodorov\Core\Kernel\Interfaces\KernelInterface;
 
 abstract class Kernel implements KernelInterface
 {
     protected ContainerInterface|null $container = null;
     protected array $binders = [];
     protected array $customBinders = [];
+    protected string $mode;
 
     /**
      * @throws ContainerException
@@ -27,6 +29,11 @@ abstract class Kernel implements KernelInterface
     public function addBinders(): void
     {
         $this->binders = array_merge($this->binders, $this->customBinders);
+    }
+
+    public function mode(): string
+    {
+        return $this->mode;
     }
 
     /**

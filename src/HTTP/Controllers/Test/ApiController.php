@@ -1,8 +1,8 @@
 <?php
 
-namespace StoyanTodorov\Core\Controllers\Test;
+namespace StoyanTodorov\Core\HTTP\Controllers\Test;
 
-use StoyanTodorov\Core\Controllers\AbstractApiController;
+use StoyanTodorov\Core\HTTP\Controllers\AbstractApiController;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiController extends AbstractApiController

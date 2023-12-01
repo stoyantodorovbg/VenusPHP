@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Controllers;
+namespace StoyanTodorov\Core\HTTP\Controllers;
 
 abstract class AbstractApiController extends AbstractController
 {

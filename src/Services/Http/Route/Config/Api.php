@@ -2,7 +2,7 @@
 
 namespace StoyanTodorov\Core\Services\Http\Route\Config;
 
-use StoyanTodorov\Core\Controllers\Test\ApiController;
+use StoyanTodorov\Core\HTTP\Controllers\Test\ApiController;
 use StoyanTodorov\Core\Services\Http\Route\HttpMethod;
 use StoyanTodorov\Core\Services\Http\Route\Router;
 

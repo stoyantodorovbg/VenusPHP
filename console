@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+
+use StoyanTodorov\Core\Bootstrapper;
+use StoyanTodorov\Core\Kernel\ConsoleKernel;
+use StoyanTodorov\Core\Services\Handler\Exceptions\ExceptionHandler;
+
+require __DIR__.'/vendor/autoload.php';
+
+try {
+    (new Bootstrapper(ConsoleKernel::getInstance()))->bootstrap();
+} catch (Throwable $e) {
+    (new ExceptionHandler())->handle($e);
+}
