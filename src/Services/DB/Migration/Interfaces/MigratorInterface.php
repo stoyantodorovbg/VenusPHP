@@ -9,12 +9,12 @@ interface MigratorInterface
      *
      * @return void
      */
-    public function migrate(): void;
+    public function forward(): void;
 
     /**
      * Run backward
      *
      * @return void
      */
-    public function rollback(): void;
+    public function backward(): void;
 }

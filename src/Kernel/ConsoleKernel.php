@@ -27,7 +27,7 @@ class ConsoleKernel extends Kernel implements SingletonInterface
 
         $commands = config(Console::class, ['commands']);
         foreach ($commands as $command) {
-            $application->add(new $command());
+            $application->add($this->getContainer()->get($command));
         }
         // ... register commands
 

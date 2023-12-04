@@ -35,7 +35,7 @@ abstract class Migration implements MigrationInterface
     protected function run(string $method): void
     {
         foreach ($this->$method() as $query) {
-            $this->adapter->exec($query);
+            $this->adapter->rawQuery($query);
         }
     }
 

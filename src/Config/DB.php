@@ -3,15 +3,15 @@
 namespace StoyanTodorov\Core\Config;
 
 use StoyanTodorov\Core\Services\DB\Enum\DBDriver;
+use StoyanTodorov\Core\Services\DB\Migration\MigrationsTable;
 
 class DB extends Config
 {
-
     protected function data(): array
     {
         return [
             'migrations' => [
-
+                MigrationsTable::class,
             ],
             'mysql' => [
                 'host'     => env('DB_HOST', '127.0.0.1'),

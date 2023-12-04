@@ -8,20 +8,20 @@ class Mysql extends SqlAdapter
 {
     protected string $connectionId = 'mysql';
 
-    public function query(array $data, array $values): array|int|string|null
+    public function rawQuery(string $statement): array
+    {
+        $connection = $this->connect()->query($statement);
+
+        return $connection->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function preparedQuery(array $data, array $values): array|int|string|null
     {
         $connection = $this->connect();
         $connection->prepare($this->prepareQuery($data));
         $output = $this->execute($connection, $values);
 
         return array_key_exists('insert', $data) ? $connection->lastInsertId() : $output;
-    }
-
-    public function exec(string $statement): array
-    {
-        $connection = $this->connect()->exec($statement);
-
-        return $connection->fetchAll(PDO::FETCH_ASSOC);
     }
 
     protected function prepareQuery(array $data): string

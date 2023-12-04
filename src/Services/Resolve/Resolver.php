@@ -82,7 +82,7 @@ class Resolver implements ResolverInterface
     {
         $dependencies = [];
         foreach ($parameters as $parameter) {
-            if (($type = $parameter->getType()) && ! in_array($type, $this->predefined)) {
+            if (($type = $parameter->getType()) && ! in_array($type, $this->predefined) && $this->isScalar($type)) {
                 $dependencies[] = $this->container->get($type);
             }
         }
@@ -96,5 +96,19 @@ class Resolver implements ResolverInterface
     private function reflection(string $className): ReflectionClass
     {
         return new ReflectionClass($className);
+    }
+
+    private function isScalar(string $type): bool
+    {
+        return str_contains('?', $type) ||
+            str_contains('|', $type) ||
+            str_contains('&', $type) ||
+            $type === 'string' ||
+            $type === 'int' ||
+            $type === 'float' ||
+            $type === 'bool' ||
+            $type === 'null' ||
+            $type === 'resource' ||
+            $type === 'callable';
     }
 }

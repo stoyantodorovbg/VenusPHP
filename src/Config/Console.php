@@ -2,7 +2,9 @@
 
 namespace StoyanTodorov\Core\Config;
 
-use StoyanTodorov\Core\Console\Command\TestCommand;
+use StoyanTodorov\Core\Console\Commands\Migrate\MigrateBackward;
+use StoyanTodorov\Core\Console\Commands\Migrate\MigrateForward;
+use StoyanTodorov\Core\Console\Commands\Test\TestCommand;
 
 class Console extends Config
 {
@@ -10,7 +12,9 @@ class Console extends Config
     {
         return [
             'commands' => [
-                TestCommand::class
+                TestCommand::class,
+                MigrateForward::class,
+                MigrateBackward::class,
             ],
         ];
     }

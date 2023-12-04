@@ -32,21 +32,21 @@ class PreparedQuery implements PreparedQueryInterface
         ];
         $queryValues = [$primary];
 
-        return $this->adapter->query($queryData, $queryValues);
+        return $this->adapter->preparedQuery($queryData, $queryValues);
     }
 
     public function findOne(array $criteria, array|null $orderBy = null): array
     {
         $query = $this->findQuery(criteria: $criteria, orderBy: $orderBy);
 
-        return $this->adapter->query($query['queryData'], $query['queryValues']);
+        return $this->adapter->preparedQuery($query['queryData'], $query['queryValues']);
     }
 
     public function findMany(array $criteria, array|null $orderBy = null, array|null $groupBy = null, int|null $limit = null): array
     {
         $query = $this->findQuery($criteria, $orderBy, $groupBy, $limit);
 
-        return $this->adapter->query($query['queryData'], $query['queryValues']);
+        return $this->adapter->preparedQuery($query['queryData'], $query['queryValues']);
     }
 
     public function createOne(array $data, bool $fetch = true): array|null
@@ -58,7 +58,7 @@ class PreparedQuery implements PreparedQueryInterface
             ],
         ];
 
-        $raw = $this->adapter->query($queryData, array_values($data));
+        $raw = $this->adapter->preparedQuery($queryData, array_values($data));
 
         return $fetch ? $this->findByPrimary($raw) : null;
     }
@@ -72,7 +72,7 @@ class PreparedQuery implements PreparedQueryInterface
             ],
         ];
 
-        $this->adapter->query($queryData, $data['values']);
+        $this->adapter->preparedQuery($queryData, $data['values']);
     }
 
     public function updateByPrimary(string|int $primary, array $data, bool $fetch = true): array|null
@@ -87,7 +87,7 @@ class PreparedQuery implements PreparedQueryInterface
         $queryValues = array_values($data);
         $queryValues[] = $primary;
 
-        $this->adapter->query($queryData, $queryValues);
+        $this->adapter->preparedQuery($queryData, $queryValues);
 
         if ($fetch) {
             return $this->findByPrimary($primary);
@@ -107,7 +107,7 @@ class PreparedQuery implements PreparedQueryInterface
         $queryValues = array_values($data);
         $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
 
-        $this->adapter->query($queryData, $queryValues);
+        $this->adapter->preparedQuery($queryData, $queryValues);
 
         if ($fetch) {
             return $this->findOne($criteria);
@@ -126,7 +126,7 @@ class PreparedQuery implements PreparedQueryInterface
         $queryValues = $data['values'];
         $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
 
-        $this->adapter->query($queryData, $queryValues);
+        $this->adapter->preparedQuery($queryData, $queryValues);
     }
 
     public function deleteByPrimary(string|int $primary): void
@@ -142,7 +142,7 @@ class PreparedQuery implements PreparedQueryInterface
         ];
         $queryValues = [$primary];
 
-        $this->adapter->query($queryData, $queryValues);
+        $this->adapter->preparedQuery($queryData, $queryValues);
     }
 
     public function deleteOne(array $criteria): void
@@ -164,7 +164,7 @@ class PreparedQuery implements PreparedQueryInterface
         $queryValues = [];
         $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
 
-        $this->adapter->query($queryData, $queryValues);
+        $this->adapter->preparedQuery($queryData, $queryValues);
     }
 
     public function updateOrCreate(array $criteria, array $data, bool $fetch = true): array

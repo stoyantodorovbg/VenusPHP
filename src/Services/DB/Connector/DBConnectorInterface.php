@@ -2,7 +2,7 @@
 
 namespace StoyanTodorov\Core\Services\DB\Connector;
 
-use StoyanTodorov\Core\Services\DB\Connection\ConnectionInterface;
+use StoyanTodorov\Core\Services\DB\Connection\Connection;
 
 interface DBConnectorInterface
 {

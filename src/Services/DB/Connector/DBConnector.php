@@ -2,7 +2,7 @@
 
 namespace StoyanTodorov\Core\Services\DB\Connector;
 
-use StoyanTodorov\Core\Services\DB\Connection\ConnectionInterface;
+use StoyanTodorov\Core\Services\DB\Connection\Connection;
 use StoyanTodorov\Core\Services\DB\Factory\ConnectionFactory;
 use StoyanTodorov\Core\Utilities\Singleton\Singleton;
 
@@ -25,6 +25,6 @@ class DBConnector implements DBConnectorInterface
     {
         $config = config('db-conf', [$id]);
 
-        $this->connections[$id] = instance(ConnectionFactory::class)->create($config['driver'])->instance($config);
+        $this->connections[$id] = instanceWithCustomParams(ConnectionFactory::class, [$config['driver']])->create()->instance($config);
     }
 }

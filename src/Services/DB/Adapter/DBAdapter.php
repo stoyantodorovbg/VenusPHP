@@ -16,15 +16,6 @@ abstract class DBAdapter
         $this->dbConnector = instance(SingletonInstanceInterface::class)->instance(DBConnector::class);
     }
 
-    /**
-     * Execute a query
-     *
-     * @param array $data
-     * @param array $values
-     * @return array|int|string|null
-     */
-    abstract public function query(array $data, array $values): array|int|string|null;
-
     public function changeConnection(string $id): void
     {
         $this->connectionId = $id;

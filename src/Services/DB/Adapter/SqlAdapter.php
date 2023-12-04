@@ -10,7 +10,16 @@ abstract class SqlAdapter extends DBAdapter
      * @param string $statement
      * @return array
      */
-    abstract public function exec(string $statement): array;
+    abstract public function rawQuery(string $statement): array;
+
+    /**
+     * Execute a prepared statement
+     *
+     * @param array $data
+     * @param array $values
+     * @return array|int|string|null
+     */
+    abstract public function preparedQuery(array $data, array $values): array|int|string|null;
 
     /**
      * Select data

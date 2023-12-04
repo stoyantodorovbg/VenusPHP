@@ -7,14 +7,14 @@ use StoyanTodorov\Core\Services\DB\Migration\Interfaces\MigratorInterface;
 
 class Migrator implements MigratorInterface
 {
-    public function migrate(): void
+    public function forward(): void
     {
         foreach (config(DB::class, ['migrations']) as $migration) {
             instance($migration)->forward();
         }
     }
 
-    public function rollback(): void
+    public function backward(): void
     {
         foreach (config(DB::class, ['migrations']) as $migration) {
             instance($migration)->backward();

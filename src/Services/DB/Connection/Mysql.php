@@ -4,23 +4,12 @@ namespace StoyanTodorov\Core\Services\DB\Connection;
 
 use PDO;
 
-class Mysql implements ConnectionInterface
+class Mysql extends Connection
 {
-    protected object $instance;
-
-    public function instance(array $config): object
-    {
-        if (! $this->instance) {
-            $this->instantiate($config);
-        }
-
-        return $this->instance;
-    }
-
-    private function instantiate(array $config): void
+    protected function instantiate(array $config): void
     {
         $this->instance = new PDO(
-            dsn: "mysql:dbname={$config['database']};host={{$config['host']}:{{$config['port']}}",
+            dsn: "mysql:host={$config['host']}:{$config['port']};dbname={$config['database']};",
             username: $config['user'],
             password: $config['password']
         );
