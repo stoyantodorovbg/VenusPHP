@@ -2,24 +2,17 @@
 
 namespace StoyanTodorov\Core\Services\DB\Migration;
 
-use StoyanTodorov\Core\Config\DB;
-use StoyanTodorov\Core\Services\DB\Adapter\DBAdapter;
 use StoyanTodorov\Core\Services\DB\Migration\Interfaces\MigrationInterface;
+use StoyanTodorov\Core\Services\DB\Query\Interfaces\RawQueryInterface;
 
 abstract class Migration implements MigrationInterface
 {
-    protected int $version = 0;
+    protected string $version;
     protected array $forwardQueries = [];
     protected array $backwardQueries = [];
-    protected string $connection = '';
-    protected DBAdapter $adapter;
 
-    public function __construct()
+    public function __construct(protected RawQueryInterface $query)
     {
-        if (! $this->connection) {
-            $this->connection = config(DB::class, ['defaultConnection']);
-        }
-        $this->adapter = instance($this->connection);
     }
 
     public function forward(): void
@@ -32,10 +25,15 @@ abstract class Migration implements MigrationInterface
         $this->run('backwardQueries');
     }
 
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
     protected function run(string $method): void
     {
         foreach ($this->$method() as $query) {
-            $this->adapter->rawQuery($query);
+            $this->query->execute($query);
         }
     }
 

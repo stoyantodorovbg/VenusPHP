@@ -1,6 +1,6 @@
 <?php
 
-namespace StoyanTodorov\Core\Services\DB\Query;
+namespace StoyanTodorov\Core\Services\DB\Query\Interfaces;
 
 interface PreparedQueryInterface
 {
@@ -8,18 +8,20 @@ interface PreparedQueryInterface
      * Find by primary key
      *
      * @param string|int $primary
+     * @param array      $columns
      * @return array
      */
-    public function findByPrimary(string|int $primary): array;
+    public function findByPrimary(string|int $primary, array $columns = []): array;
 
     /**
      * Find one by criteria
      *
-     * @param array      $criteria
-     * @param array|null $orderBy
+     * @param array $criteria
+     * @param array $orderBy
+     * @param array $columns
      * @return array
      */
-    public function findOne(array $criteria, array|null $orderBy = null): array;
+    public function findOne(array $criteria = [], array $orderBy = [], array $columns = []): array;
 
     /**
      * Find many by criteria
@@ -112,4 +114,12 @@ interface PreparedQueryInterface
      * @return array
      */
     public function updateOrCreate(array $criteria, array $data, bool $fetch = true): array;
+
+    /**
+     * Get rows count
+     *
+     * @param array $criteria
+     * @return int
+     */
+    public function count(array $criteria): int;
 }

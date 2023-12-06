@@ -28,7 +28,7 @@ abstract class SqlAdapter extends DBAdapter
      * @param array  $columns
      * @return string
      */
-    abstract protected function select(string $table, array $columns): string;
+    abstract protected function select(string $table, array $columns = []): string;
 
     /**
      * Select rows count
@@ -63,12 +63,11 @@ abstract class SqlAdapter extends DBAdapter
     abstract protected function orderBy(array $orderBy): string;
 
     /**
-     * Limit data
+     * Limit
      *
-     * @param int $limit
      * @return string
      */
-    abstract protected function limit(int $limit): string;
+    abstract protected function limit(): string;
 
     /**
      * Group data
@@ -82,21 +81,19 @@ abstract class SqlAdapter extends DBAdapter
      * Insert data
      *
      * @param string $table
-     * @param array  $columns
-     * @param array  $values
+     * @param array  $data
      * @return string
      */
-    abstract protected function insert(string $table, array $columns, array $values): string;
+    abstract protected function insert(string $table, array $data): string;
 
     /**
      * Update data
      *
      * @param string $table
      * @param array  $columns
-     * @param array  $values
      * @return string
      */
-    abstract protected function update(string $table, array $columns, array $values): string;
+    abstract protected function update(string $table, array $columns): string;
 
     /**
      * Delete data

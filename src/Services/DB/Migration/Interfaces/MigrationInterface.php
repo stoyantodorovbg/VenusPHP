@@ -17,4 +17,11 @@ interface MigrationInterface
      * @return void
      */
     public function backward(): void;
+
+    /**
+     * Get migration version
+     *
+     * @return string
+     */
+    public function getVersion(): string;
 }

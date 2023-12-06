@@ -3,7 +3,9 @@
 namespace StoyanTodorov\Core\Config;
 
 use StoyanTodorov\Core\Services\DB\Enum\DBDriver;
-use StoyanTodorov\Core\Services\DB\Migration\MigrationsTable;
+use StoyanTodorov\Core\Services\DB\Migration\Test\AnotherTable;
+use StoyanTodorov\Core\Services\DB\Migration\Test\AnotherTestTable;
+use StoyanTodorov\Core\Services\DB\Migration\Test\TestTable;
 
 class DB extends Config
 {
@@ -11,7 +13,9 @@ class DB extends Config
     {
         return [
             'migrations' => [
-                MigrationsTable::class,
+                TestTable::class,
+                AnotherTable::class,
+                AnotherTestTable::class,
             ],
             'mysql' => [
                 'host'     => env('DB_HOST', '127.0.0.1'),

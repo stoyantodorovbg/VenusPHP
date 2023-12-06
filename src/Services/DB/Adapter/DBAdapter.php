@@ -27,15 +27,6 @@ abstract class DBAdapter
     }
 
     /**
-     * Execute a query
-     *
-     * @param object $connection
-     * @param array  $values
-     * @return array|null
-     */
-    abstract protected function execute(object $connection, array $values): array|null;
-
-    /**
      * Prepare a query
      *
      * @param array $data

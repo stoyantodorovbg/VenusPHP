@@ -2,42 +2,34 @@
 
 namespace StoyanTodorov\Core\Services\DB\Query;
 
-use StoyanTodorov\Core\Config\DB;
 use StoyanTodorov\Core\Services\DB\Adapter\DBAdapter;
+use StoyanTodorov\Core\Services\DB\Query\Interfaces\PreparedQueryInterface;
 
-class PreparedQuery implements PreparedQueryInterface
+class PreparedQuery extends Query implements PreparedQueryInterface
 {
     protected DBAdapter $adapter;
     
     public function __construct(
-        protected string $connection,
+        protected string|null $connection,
         protected string $table,
         protected string $primaryKey = 'id',
     ) {
-        if (! $this->connection) {
-            $this->connection = config(DB::class, ['defaultConnection']);
-        }
-        $this->adapter = instance($this->connection);
+        parent::__construct($connection);
     }
 
-    public function findByPrimary(string|int $primary): array
+    public function findByPrimary(string|int $primary, array $columns = []): array
     {
         $queryData = [
-            'select' => [
-                'table' => $this->table,
-            ],
-            'where'  => [
-                [$this->primaryKey, '='],
-            ]
+            'select' => ['table' => $this->table, 'columns' => $columns],
+            'where'  => [[[$this->primaryKey, '=']]]
         ];
-        $queryValues = [$primary];
 
-        return $this->adapter->preparedQuery($queryData, $queryValues);
+        return $this->adapter->preparedQuery($queryData, [$primary]);
     }
 
-    public function findOne(array $criteria, array|null $orderBy = null): array
+    public function findOne(array $criteria = [], array $orderBy = [], array $columns = []): array
     {
-        $query = $this->findQuery(criteria: $criteria, orderBy: $orderBy);
+        $query = $this->findQuery(criteria: $criteria, orderBy: $orderBy, limit: 1, columns: $columns);
 
         return $this->adapter->preparedQuery($query['queryData'], $query['queryValues']);
     }
@@ -53,8 +45,8 @@ class PreparedQuery implements PreparedQueryInterface
     {
         $queryData = [
             'insert' => [
-                'table'   => $this->table,
-                'columns' => array_keys($data),
+                'table' => $this->table,
+                'data'  => $data,
             ],
         ];
 
@@ -96,16 +88,15 @@ class PreparedQuery implements PreparedQueryInterface
 
     public function updateOne(array $criteria, array $data, bool $fetch = true): array|null
     {
+        $queryValues = array_values($data);
         $queryData = [
             'update' => [
                 'table'   => $this->table,
                 'columns' => array_keys($data),
             ],
-            'where'  => [],
-            'limit'  => 1
+            'where'  => [$this->whereQuery($criteria, $queryValues)],
+            'limit'  => $this->limitQuery(1, $queryValues),
         ];
-        $queryValues = array_values($data);
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
 
         $this->adapter->preparedQuery($queryData, $queryValues);
 
@@ -116,15 +107,14 @@ class PreparedQuery implements PreparedQueryInterface
 
     public function updateMany(array $criteria, $data): null
     {
+        $queryValues = $data['values'];
         $queryData = [
             'update' => [
                 'table'   => $this->table,
                 'columns' => $data['columns'],
             ],
-            'where'  => [],
+            'where'  => [$this->whereQuery($criteria, $queryValues)],
         ];
-        $queryValues = $data['values'];
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
 
         $this->adapter->preparedQuery($queryData, $queryValues);
     }
@@ -152,17 +142,16 @@ class PreparedQuery implements PreparedQueryInterface
 
     public function deleteMany(array $criteria, int|null $limit = null): void
     {
+        $queryValues = [];
         $queryData = [
             'delete' => [
                 'table'   => $this->table,
             ],
-            'where'  => [],
+            'where'  => [$this->whereQuery($criteria, $queryValues)],
         ];
         if ($limit !== null) {
             $queryData['limit'] = $limit;
         }
-        $queryValues = [];
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
 
         $this->adapter->preparedQuery($queryData, $queryValues);
     }
@@ -176,33 +165,72 @@ class PreparedQuery implements PreparedQueryInterface
         return $this->createOne($data, $fetch);
     }
 
+    public function count(array $criteria): int
+    {
+        $queryValues = [];
+        $queryData = [
+            'count' => ['table' => $this->table],
+            'where' => [$this->whereQuery($criteria, $queryValues)],
+        ];
+
+        return $this->adapter->preparedQuery($queryData, $queryValues)[0]['count'];
+    }
+
     protected function findQuery(
         array $criteria,
-        array|null $orderBy = null,
-        array|null $groupBy =  null,
+        array $orderBy = [],
+        array $groupBy = [],
         int|null $limit = null,
+        array $columns = [],
     ): array
     {
-        $queryData = [
-            'select' => [
-                'table' => $this->table,
-            ],
-            'where'   => [],
-            'orderBy' => $orderBy,
-            'groupBy' => $groupBy,
-            'limit'   => $limit,
-        ];
         $queryValues = [];
-        $this->whereByCriteriaQuery($criteria, $queryData, $queryValues);
+        $queryData = ['select' => ['table' => $this->table, 'columns' => $columns]];
+
+        if ($criteria) {
+            $queryData['where'] = [$this->whereQuery($criteria, $queryValues)];
+        }
+
+        if ($orderBy) {
+            $queryData['orderBy'] = [$this->orderByQuery($orderBy)];
+        }
+
+//        if ($groupBy) {
+//            $queryData['groupBy'] = [$groupBy];
+//        }
+
+        if ($limit) {
+            $queryData['limit'] = $this->limitQuery($limit, $queryValues);
+        }
 
         return compact('queryData', 'queryValues');
     }
 
-    protected function whereByCriteriaQuery(array $criteria, array &$queryData, array &$queryValues): void
+    protected function whereQuery(array $criteria, array &$queryValues): array
     {
+        $output = [];
         foreach ($criteria as $filter) {
-            $queryData['where'][] = [$filter[0], $filter[1]];
+            $output[] = [$filter[0], $filter[1]];
             $queryValues[] = $filter[2];
         }
+
+        return $output;
+    }
+
+    protected function orderByQuery(array $orderBy): array
+    {
+        $output = [];
+        foreach ($orderBy as $filter) {
+            $output[] = [$filter[0], $filter[1]];
+        }
+
+        return $output;
+    }
+
+    protected function limitQuery(int $limit, array &$queryValues): array
+    {
+        $queryValues[] = $limit;
+
+        return [[]];
     }
 }

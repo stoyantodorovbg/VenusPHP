@@ -3,8 +3,6 @@
 namespace StoyanTodorov\Core\Console\Commands\Test;
 
 use StoyanTodorov\Core\Console\Commands\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class TestCommand extends Command
 {
@@ -15,7 +13,6 @@ class TestCommand extends Command
 
     protected function handle(): int
     {
-        var_dump(22222);
-        return Command::SUCCESS;
+        return $this->success();
     }
 }

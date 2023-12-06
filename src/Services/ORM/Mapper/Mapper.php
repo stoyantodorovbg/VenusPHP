@@ -2,7 +2,7 @@
 
 namespace StoyanTodorov\Core\Services\ORM\Mapper;
 
-use StoyanTodorov\Core\Services\DB\Query\PreparedQueryInterface;
+use StoyanTodorov\Core\Services\DB\Query\Interfaces\PreparedQueryInterface;
 use StoyanTodorov\Core\Services\ORM\Converter\Interfaces\EntityConverterInterface;
 use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 

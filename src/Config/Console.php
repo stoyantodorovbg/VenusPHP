@@ -4,6 +4,7 @@ namespace StoyanTodorov\Core\Config;
 
 use StoyanTodorov\Core\Console\Commands\Migrate\MigrateBackward;
 use StoyanTodorov\Core\Console\Commands\Migrate\MigrateForward;
+use StoyanTodorov\Core\Console\Commands\Psy\StartPsy;
 use StoyanTodorov\Core\Console\Commands\Test\TestCommand;
 
 class Console extends Config

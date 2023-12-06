@@ -2,7 +2,6 @@
 
 namespace StoyanTodorov\Core\Console\Commands;
 
-use http\Exception\BadUrlException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +11,7 @@ abstract class Command extends SymfonyCommand
     protected string $nameSpace = '';
     protected string $name;
     protected string $description = '';
-    protected string $help = '';
+    protected string $help = 'No options needed';
     protected array $instantiated = [];
     protected InputInterface|null $input;
     protected OutputInterface|null $output;
@@ -38,6 +37,11 @@ abstract class Command extends SymfonyCommand
     protected function configure(): void
     {
         $this->setName($this->getFullName())->setDescription($this->description)->setHelp($this->help);
+    }
+
+    protected function success(): int
+    {
+        return SymfonyCommand::SUCCESS;
     }
 
     private function getFullName(): string

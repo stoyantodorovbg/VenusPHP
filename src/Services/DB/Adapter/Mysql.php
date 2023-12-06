@@ -18,10 +18,17 @@ class Mysql extends SqlAdapter
     public function preparedQuery(array $data, array $values): array|int|string|null
     {
         $connection = $this->connect();
-        $connection->prepare($this->prepareQuery($data));
-        $output = $this->execute($connection, $values);
+        $query = $this->prepareQuery($data);
+        $statement = $connection->prepare($query);
 
-        return array_key_exists('insert', $data) ? $connection->lastInsertId() : $output;
+        foreach ($values as $key => $value) {
+            $statement->bindValue($key + 1, $value, $this->pdoValueType($value));
+        }
+        if ($statement->execute()) {
+            return array_key_exists('insert', $data) ?
+                $connection->lastInsertId() :
+                $statement->fetchAll();
+        }
     }
 
     protected function prepareQuery(array $data): string
@@ -34,23 +41,27 @@ class Mysql extends SqlAdapter
         return "{$query};";
     }
 
-    protected function execute(object $connection, array $values = []): array|null
+    protected function pdoValueType($value): int
     {
-        $connection->execute($values);
-
-        return $connection->fetchAll(PDO::FETCH_ASSOC);
+        return match(gettype($value)) {
+            'NULL'    => PDO::PARAM_NULL,
+            'integer' => PDO::PARAM_INT,
+            'boolean' => PDO::PARAM_BOOL,
+            default   => PDO::PARAM_STR,
+        };
     }
 
-    protected function select(string $table, array $columns): string
+    protected function select(string $table, array $columns = []): string
     {
+        $columns = array_map(fn($column) => "`{$column}`", $columns);
         $columns = $columns ? implode(', ', $columns) : '*';
 
-        return "SELECT {$columns} FROM {$table}";
+        return "SELECT {$columns} FROM `{$table}`";
     }
 
     protected function count(string $table): string
     {
-        return "SELECT count(*) FROM {$table}";
+        return "SELECT count(*) as count FROM `{$table}`";
     }
 
     protected function where(array $criteria): string
@@ -58,7 +69,7 @@ class Mysql extends SqlAdapter
         $output = ' WHERE';
         $lastKey = array_key_last($criteria);
         foreach ($criteria as $key => $data) {
-            $output .= " {$data['column']} {$data['operator']} ':{$data['column']}'";
+            $output .= " `{$data[0]}` {$data[1]} ?";
             if ($lastKey !== $key) {
                 $output .= ' AND';
             }
@@ -69,10 +80,10 @@ class Mysql extends SqlAdapter
 
     protected function whereIn(array $criteria): string
     {
-        $output = " WHERE {$criteria['column']} IN (";
+        $output = " WHERE `{$criteria['column']}` IN (";
         $lastKey = array_key_last($criteria['values']);
         foreach ($criteria['values'] as $key => $value) {
-            $output .= " ':{$value}'";
+            $output .= " ?";
             if ($lastKey !== $key) {
                 $output .= ',';
             }
@@ -87,7 +98,7 @@ class Mysql extends SqlAdapter
         $output = ' ORDER BY';
         $lastKey = array_key_last($orderBy);
         foreach ($orderBy as $key => $data) {
-            $output .= " {$data['column']} {$data['direction']}";
+            $output .= " {$data[0]} {$data[1]}";
             if ($lastKey !== $key) {
                 $output .= ',';
             }
@@ -96,9 +107,9 @@ class Mysql extends SqlAdapter
         return $output;
     }
 
-    protected function limit(int $limit): string
+    protected function limit(): string
     {
-        return " LIMIT {$limit}";
+        return ' LIMIT ?';
     }
 
     protected function groupBy(array $groupBy): string
@@ -106,7 +117,7 @@ class Mysql extends SqlAdapter
         $output = ' GROUP BY';
         $lastKey = array_key_last($groupBy);
         foreach ($groupBy as $key => $column) {
-            $output .= " {$column}";
+            $output .= " `{$column}`";
             if ($lastKey !== $key) {
                 $output .= ',';
             }
@@ -115,45 +126,54 @@ class Mysql extends SqlAdapter
         return $output;
     }
 
-    protected function insert(string $table, array $columns, array $values): string
+    protected function insert(string $table, array $data): string
     {
-        $columns = implode(', ', $columns);
-        $data = '';
+        $columns = array_keys($data);
+        $columnsQuery = implode(', ', $columns);
+        $valuesQuery = '(';
+        $values = array_values($data);
         $lastKey = array_key_last($values);
+
         foreach ($values as $key => $row) {
-            $lastRowKey = array_key_last($row);
-            $data .= '(';
-            foreach ($row as $rowKey => $rowValues) {
-                $data .= " ':{$row['column']}'";
-                if ($lastRowKey !== $rowKey) {
-                    $data .= ',';
+            if (is_array($row)) {
+                $lastRowKey = array_key_last($row);
+                $valuesQuery .= '(';
+                foreach ($row as $rowKey => $rowValues) {
+                    $valuesQuery .= ' ?';
+                    if ($lastRowKey !== $rowKey) {
+                        $valuesQuery .= ',';
+                    }
                 }
+                $valuesQuery .= ')';
+            } else {
+                $valuesQuery .= ' ?';
             }
-            $data .= ')';
+
             if ($lastKey !== $key) {
-                $data .= ', ';
+                $valuesQuery .= ',';
             }
         }
+        $valuesQuery .= ')';
 
-        return "INSERT INTO {$table} ({$columns}) VALUES {$data}";
+        return "INSERT INTO `{$table}` ({$columnsQuery}) VALUES {$valuesQuery}";
     }
 
-    protected function update(string $table, array $columns, array $values): string
+    protected function update(string $table, array $columns): string
     {
         $data ='';
-        $lastColumn = array_key_last($columns);
+        $lastKey = array_key_last($columns);
         foreach ($columns as $key => $column) {
-            $data .= " {$column} = ':{$values[$key]}'}";
-            if ($lastColumn !== $column) {
+            $data .= " {$column} = ?";
+            if ($lastKey !== $key) {
                 $data .= ',';
             }
         }
 
-        return "UPDATE {$table} SET {$data}";
+        return "UPDATE `{$table}` SET {$data}";
     }
 
     protected function delete(string $table): string
     {
-        return "DELETE FROM {$table}";
+        return "DELETE FROM `{$table}`";
     }
 }
