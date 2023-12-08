@@ -26,13 +26,14 @@ interface PreparedQueryInterface
     /**
      * Find many by criteria
      *
-     * @param array      $criteria
-     * @param array|null $orderBy
-     * @param array|null $groupBy
-     * @param int|null   $limit
+     * @param array    $criteria
+     * @param array    $orderBy
+     * @param array    $groupBy
+     * @param int|null $limit
+     * @param array    $columns
      * @return array
      */
-    public function findMany(array $criteria, array|null $orderBy = null, array|null $groupBy = null, int|null $limit = null): array;
+    public function find(array $criteria, array $orderBy = [], array $groupBy = [], int|null $limit = null, array $columns = []): array;
 
     /**
      * Create one
@@ -47,9 +48,9 @@ interface PreparedQueryInterface
      * Create many
      *
      * @param array $data
-     * @return array|null
+     * @return void
      */
-    public function createMany(array $data): array|null;
+    public function createMany(array $data): void;
 
     /**
      * Update by primary key

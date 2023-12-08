@@ -19,22 +19,15 @@ class PreparedQuery extends Query implements PreparedQueryInterface
 
     public function findByPrimary(string|int $primary, array $columns = []): array
     {
-        $queryData = [
-            'select' => ['table' => $this->table, 'columns' => $columns],
-            'where'  => [[[$this->primaryKey, '=']]]
-        ];
-
-        return $this->adapter->preparedQuery($queryData, [$primary]);
+        return $this->findOne(criteria: [[$this->primaryKey, '=', $primary]], columns: $columns);
     }
 
     public function findOne(array $criteria = [], array $orderBy = [], array $columns = []): array
     {
-        $query = $this->findQuery(criteria: $criteria, orderBy: $orderBy, limit: 1, columns: $columns);
-
-        return $this->adapter->preparedQuery($query['queryData'], $query['queryValues']);
+        return $this->find(criteria: $criteria, orderBy: $orderBy, limit: 1, columns: $columns);
     }
 
-    public function findMany(array $criteria, array|null $orderBy = null, array|null $groupBy = null, int|null $limit = null): array
+    public function find(array $criteria, array $orderBy = [], array $groupBy = [], int|null $limit = null, array $columns = []): array
     {
         $query = $this->findQuery($criteria, $orderBy, $groupBy, $limit);
 
@@ -52,38 +45,26 @@ class PreparedQuery extends Query implements PreparedQueryInterface
 
         $raw = $this->adapter->preparedQuery($queryData, array_values($data));
 
-        return $fetch ? $this->findByPrimary($raw) : null;
+        if ($fetch) {
+            return $this->findByPrimary($raw);
+        }
     }
 
-    public function createMany(array $data): array|null
+    public function createMany(array $data): void
     {
         $queryData = [
             'insert' => [
                 'table'   => $this->table,
-                'columns' => $data['columns'],
+                'data' => $data,
             ],
         ];
 
-        $this->adapter->preparedQuery($queryData, $data['values']);
+        $this->adapter->preparedQuery($queryData, array_values($data));
     }
 
     public function updateByPrimary(string|int $primary, array $data, bool $fetch = true): array|null
     {
-        $queryData = [
-            'update' => [
-                'table'   => $this->table,
-                'columns' => array_keys($data),
-            ],
-            'where'  => [$this->primaryKey, '='],
-        ];
-        $queryValues = array_values($data);
-        $queryValues[] = $primary;
-
-        $this->adapter->preparedQuery($queryData, $queryValues);
-
-        if ($fetch) {
-            return $this->findByPrimary($primary);
-        }
+        return $this->updateOne(criteria: [[$this->primaryKey, '=', $primary]], data: $data, fetch: $fetch);
     }
 
     public function updateOne(array $criteria, array $data, bool $fetch = true): array|null
@@ -121,16 +102,12 @@ class PreparedQuery extends Query implements PreparedQueryInterface
 
     public function deleteByPrimary(string|int $primary): void
     {
-        $queryData = [
-            'delete' => [
-                'table'   => $this->table,
-            ],
-            'where'  => [
-                [$this->primaryKey, '='],
-            ],
-            'limit' => 1,
-        ];
         $queryValues = [$primary];
+        $queryData = [
+            'delete' => ['table'   => $this->table,],
+            'where'  => [$this->whereQuery([[$this->primaryKey, '=', $primary]], $queryValues)],
+            'limit' => $this->limitQuery(1, $queryValues),
+        ];
 
         $this->adapter->preparedQuery($queryData, $queryValues);
     }
@@ -144,13 +121,11 @@ class PreparedQuery extends Query implements PreparedQueryInterface
     {
         $queryValues = [];
         $queryData = [
-            'delete' => [
-                'table'   => $this->table,
-            ],
+            'delete' => ['table'   => $this->table],
             'where'  => [$this->whereQuery($criteria, $queryValues)],
         ];
         if ($limit !== null) {
-            $queryData['limit'] = $limit;
+            $queryData['limit'] = $this->limitQuery($limit, $queryValues);
         }
 
         $this->adapter->preparedQuery($queryData, $queryValues);
