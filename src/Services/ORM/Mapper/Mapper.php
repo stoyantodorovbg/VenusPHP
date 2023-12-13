@@ -8,13 +8,15 @@ use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 
 abstract class Mapper implements MapperInterface
 {
+    protected string $primaryKey;
     protected EntityConverterInterface $converter;
     protected PreparedQueryInterface $preparedQuery;
 
     public function __construct(protected string $entity, protected string|null $connection = null)
     {
+        $this->primaryKey = $entity::primaryKey();
         $this->converter = instance(EntityConverterInterface::class);
-        $this->preparedQuery = instance(PreparedQueryInterface::class, [
+        $this->preparedQuery = instanceWithCustomParams(PreparedQueryInterface::class, [
             $this->connection ?? $entity::connection(),
             $entity::table(),
         ]);

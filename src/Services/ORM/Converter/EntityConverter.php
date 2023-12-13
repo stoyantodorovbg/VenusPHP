@@ -4,12 +4,21 @@ namespace StoyanTodorov\Core\Services\ORM\Converter;
 
 use StoyanTodorov\Core\Services\ORM\Converter\Interfaces\EntityConverterInterface;
 use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
+use StoyanTodorov\Core\Services\String\Interfaces\StringConverterInterface;
 
 class EntityConverter extends Converter implements EntityConverterInterface
 {
     public function toEntity(array $data, string $entityClass): EntityInterface
     {
         $config = $this->fromRawConfig($entityClass);
+        $stringConverter = instance(StringConverterInterface::class);
+        foreach ($data as $property => $value) {
+            if (str_contains($property, '_')) {
+                $converted = $stringConverter->snakeToCamel($property);
+                $data[$converted] = $value;
+                unset($data[$property]);
+            }
+        }
         $data = $this->convertData($data, $config);
 
         return new $entityClass(...$data);
@@ -28,7 +37,7 @@ class EntityConverter extends Converter implements EntityConverterInterface
         foreach($data as $property => $value) {
             if (isset($config[$property])) {
                 foreach ($config[$property] as $type) {
-                    $data[$property] = $this->converter->convert($data[$property], $type);
+                    $data[$property] = $this->convert($data[$property], $type);
                 }
             }
         }

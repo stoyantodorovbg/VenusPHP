@@ -39,10 +39,9 @@ interface MapperInterface
      *
      * @param array $data
      * @param bool  $save
-     * @param bool  $fetch
-     * @return EntityInterface|null
+     * @return EntityInterface
      */
-    public function createOne(array $data, bool $save = true, bool $fetch = true): EntityInterface|null;
+    public function createOne(array $data, bool $save = true): EntityInterface;
 
     /**
      * Create many

@@ -10,11 +10,8 @@ use StoyanTodorov\Core\Services\String\Interfaces\StringConverterInterface;
 
 class Entity implements EntityInterface
 {
-    protected static string $connection = 'mysql';
-    protected static string $primaryKey = 'id';
-    protected static string $table = '';
-    protected static bool $trackDates = true;
-    protected static array $defaultParseConfig = [
+    public static bool $trackDates = true;
+    public static array $defaultParseConfig = [
         'fromRaw' => [
             'created' => ['carbon'],
             'updated' => ['carbon'],
@@ -24,12 +21,16 @@ class Entity implements EntityInterface
             'updated' => ['string'],
         ],
     ];
-    protected static array $parseConfig = [];
-
-    protected static array $convertToRawMap = [
+    public static array $parseConfig = [];
+    public static array $convertToRawMap = [
         'carbon' => 'string',
         'bool'   => 'int',
     ];
+
+    protected static string $mapper;
+    protected static string $connection = 'mysql';
+    protected static string $primaryKey = 'id';
+    protected static string $table = '';
 
     /**
      * @throws Exception
@@ -46,12 +47,6 @@ class Entity implements EntityInterface
     {
         $this->setProperty($property, $value);
     }
-
-    public static function fromArray(array $data): self
-    {
-        return new self(...$data);
-    }
-
     public function toArray(): array
     {
         $output = [];
@@ -101,9 +96,17 @@ class Entity implements EntityInterface
         $this->$property = $value;
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self(...$data);
+    }
+
+
     public static function mapper(string|null $connection = null): MapperInterface
     {
-        return instance(self::connection, [self::class, $connection]);
+        $connection = $connection ?? static::$connection;
+
+        return instanceWithCustomParams(static::$mapper, [static::class, $connection]);
     }
 
     public static function primaryKey(): string
@@ -118,10 +121,11 @@ class Entity implements EntityInterface
 
     public static function table(): string
     {
-        if (! ($table = self::$table)) {
-            $nameSpace = self::class;
+        if (! ($table = static::$table)) {
+            $nameSpace = static::class;
             $nameData = explode('\\', $nameSpace);
-            $className = $nameSpace[array_key_last($nameData)];
+            $className = $nameData[array_key_last($nameData)];
+
             $table = instance(StringConverterInterface::class)->pascalToSnake($className);
         }
 

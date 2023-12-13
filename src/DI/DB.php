@@ -2,6 +2,8 @@
 
 namespace StoyanTodorov\Core\DI;
 
+use StoyanTodorov\Core\Services\DataGenerator\DataGeneratorService;
+use StoyanTodorov\Core\Services\DataGenerator\DataGeneratorServiceInterface;
 use StoyanTodorov\Core\Services\DB\Adapter\Mysql;
 use StoyanTodorov\Core\Services\DB\Migration\Interfaces\MigratorInterface;
 use StoyanTodorov\Core\Services\DB\Migration\Migrator;
@@ -14,5 +16,6 @@ class DB extends Binder
         [MigratorInterface::class, Migrator::class, [RawQueryInterface::class]],
         ['mysql', Mysql::class],
         [RawQueryInterface::class, RawQuery::class],
+        [DataGeneratorServiceInterface::class, DataGeneratorService::class],
     ];
 }

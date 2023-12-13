@@ -98,7 +98,7 @@ class Mysql extends SqlAdapter
         $output = ' ORDER BY';
         $lastKey = array_key_last($orderBy);
         foreach ($orderBy as $key => $data) {
-            $output .= " {$data[0]} {$data[1]}";
+            $output .= " `{$data[0]}` {$data[1]}";
             if ($lastKey !== $key) {
                 $output .= ',';
             }
@@ -129,6 +129,7 @@ class Mysql extends SqlAdapter
     protected function insert(string $table, array $data): string
     {
         $columns = array_keys($data);
+        $columns = array_map(static fn($column) => "`{$column}`", $columns);
         $columnsQuery = implode(', ', $columns);
         $valuesQuery = '(';
         $values = array_values($data);
@@ -163,7 +164,7 @@ class Mysql extends SqlAdapter
         $data ='';
         $lastKey = array_key_last($columns);
         foreach ($columns as $key => $column) {
-            $data .= " {$column} = ?";
+            $data .= " `{$column}` = ?";
             if ($lastKey !== $key) {
                 $data .= ',';
             }

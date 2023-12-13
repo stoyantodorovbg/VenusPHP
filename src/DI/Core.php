@@ -2,6 +2,8 @@
 
 namespace StoyanTodorov\Core\DI;
 
+use StoyanTodorov\Core\Services\DB\Query\Interfaces\PreparedQueryInterface;
+use StoyanTodorov\Core\Services\DB\Query\PreparedQuery;
 use StoyanTodorov\Core\Services\Handler\HttpRequestHandler;
 use StoyanTodorov\Core\Services\Handler\Interfaces\HttpRequestHandlerInterface;
 use StoyanTodorov\Core\Services\Http\Request\Request;
@@ -14,8 +16,12 @@ use StoyanTodorov\Core\Services\Http\Route\Interfaces\RouteServiceInterface;
 use StoyanTodorov\Core\Services\Http\Route\RouteService;
 use StoyanTodorov\Core\Services\Log\LoggerService;
 use StoyanTodorov\Core\Services\Log\LoggerServiceInterface;
+use StoyanTodorov\Core\Services\ORM\Converter\EntityConverter;
+use StoyanTodorov\Core\Services\ORM\Converter\Interfaces\EntityConverterInterface;
 use StoyanTodorov\Core\Services\Resolve\Resolver;
 use StoyanTodorov\Core\Services\Resolve\ResolverInterface;
+use StoyanTodorov\Core\Services\String\Interfaces\StringConverterInterface;
+use StoyanTodorov\Core\Services\String\StringConverter;
 use StoyanTodorov\Core\Services\TemplateEngine\Interfaces\TemplateEngineServiceInterface;
 use StoyanTodorov\Core\Services\TemplateEngine\SmartyTemplateEngine;
 use StoyanTodorov\Core\Services\TemplateEngine\TemplateEngineService;
@@ -39,5 +45,8 @@ class Core extends Binder
         [RouteServiceInterface::class, RouteService::class],
         [RequestInterface::class, Request::class],
         [RouteFactoryInterface::class, RouteFactory::class],
+        [EntityConverterInterface::class, EntityConverter::class],
+        [StringConverterInterface::class, StringConverter::class],
+        [PreparedQueryInterface::class, PreparedQuery::class],
     ];
 }

@@ -2,6 +2,7 @@
 
 namespace StoyanTodorov\Core\Config;
 
+use StoyanTodorov\Core\Services\DataGenerator\Test\TestDataGenerator;
 use StoyanTodorov\Core\Services\DB\Enum\DBDriver;
 use StoyanTodorov\Core\Services\DB\Migration\Test\AnotherTable;
 use StoyanTodorov\Core\Services\DB\Migration\Test\AnotherTestTable;
@@ -12,11 +13,6 @@ class DB extends Config
     protected function data(): array
     {
         return [
-            'migrations' => [
-                TestTable::class,
-                AnotherTable::class,
-                AnotherTestTable::class,
-            ],
             'mysql' => [
                 'host'     => env('DB_HOST', '127.0.0.1'),
                 'port'     => env('DB_PORT', '3306'),
@@ -26,6 +22,14 @@ class DB extends Config
                 'driver'   => DBDriver::MYSQL,
             ],
             'defaultConnection' => 'mysql',
+            'migrations' => [
+                TestTable::class,
+                AnotherTable::class,
+                AnotherTestTable::class,
+            ],
+            'dataGenerators' => [
+                TestDataGenerator::class,
+            ],
         ];
     }
 }

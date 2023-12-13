@@ -7,15 +7,12 @@ use StoyanTodorov\Core\Services\ORM\Entity\EntityInterface;
 
 class MysqlMapper extends Mapper
 {
-    protected string $entity;
     protected string $table;
-    protected string $primaryKey;
 
     public function __construct(string $entity, string|null $connection = null)
     {
         parent::__construct($entity, $connection);
         $this->table = $this->entity::table();
-        $this->primaryKey = $this->entity::primaryKey();
     }
 
     public function findByPrimary(string|int $primary): EntityInterface
@@ -39,15 +36,14 @@ class MysqlMapper extends Mapper
         return $this->getEntities($raw);
     }
 
-    public function createOne(array $data, bool $save = true, bool $fetch = true): EntityInterface|null
+    public function createOne(array $data, bool $save = true): EntityInterface
     {
-        if (! $save) {
-            return $this->getEntity($data);
+        if ($save) {
+            $data = $this->preparedQuery->createOne($data);
+            $data = $data[array_key_first($data)];
         }
 
-        $raw = $this->preparedQuery->createOne($data);
-
-        return $fetch ? $this->findByPrimary($raw) : null;
+        return $this->getEntity($data);
     }
 
     public function createMany(array $data, bool $save = true): array|null
@@ -154,10 +150,7 @@ class MysqlMapper extends Mapper
 
     protected function getEntity(array $raw): EntityInterface
     {
-        $data = $this->converter->toEntity($raw, $this->entity);
-        $entity = $this->entity;
-
-        return new $entity(...$data);
+        return $this->converter->toEntity($raw, $this->entity);
     }
 
     protected function getEntities(array $raw): array

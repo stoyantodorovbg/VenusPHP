@@ -24,10 +24,18 @@ interface StringConverterInterface
     public function snake(string $string): string;
 
     /**
-     * Convert string from pascal to snake case
+     * Convert string from pascal case to snake case
      *
      * @param string $string
      * @return string
      */
     public function pascalToSnake(string $string): string;
+
+    /**
+     * Convert string from snake case to camel case
+     *
+     * @param string $string
+     * @return string
+     */
+    public function snakeToCamel(string $string): string;
 }
