@@ -21,9 +21,20 @@ class Mysql extends SqlAdapter
         $query = $this->prepareQuery($data);
         $statement = $connection->prepare($query);
 
-        foreach ($values as $key => $value) {
-            $statement->bindValue($key + 1, $value, $this->pdoValueType($value));
+        $key = 1;
+        foreach ($values as $value) {
+            if (! is_array($value)) {
+                $statement->bindValue($key, $value, $this->pdoValueType($value));
+                $key++;
+
+                continue;
+            }
+            foreach($value as $innerValue) {
+                $statement->bindValue($key, $innerValue, $this->pdoValueType($innerValue));
+                $key++;
+            }
         }
+
         if ($statement->execute()) {
             return array_key_exists('insert', $data) ?
                 $connection->lastInsertId() :
@@ -128,12 +139,24 @@ class Mysql extends SqlAdapter
 
     protected function insert(string $table, array $data): string
     {
-        $columns = array_keys($data);
-        $columns = array_map(static fn($column) => "`{$column}`", $columns);
+        $columnsData = array_keys($data);
+        $columns = [];
+        foreach ($columnsData as $column) {
+            if (is_string($column)) {
+                $columns[] = "`{$column}`";
+                continue;
+            }
+            foreach (array_keys($data[$column]) as $innerColumn) {
+                $columns[] = "`{$innerColumn}`";
+            }
+            break;
+        }
+
         $columnsQuery = implode(', ', $columns);
-        $valuesQuery = '(';
+        $valuesQuery = '';
         $values = array_values($data);
         $lastKey = array_key_last($values);
+        $multipleRows = false;
 
         foreach ($values as $key => $row) {
             if (is_array($row)) {
@@ -146,6 +169,7 @@ class Mysql extends SqlAdapter
                     }
                 }
                 $valuesQuery .= ')';
+                $multipleRows = true;
             } else {
                 $valuesQuery .= ' ?';
             }
@@ -154,9 +178,10 @@ class Mysql extends SqlAdapter
                 $valuesQuery .= ',';
             }
         }
-        $valuesQuery .= ')';
+        $firstBracket = $multipleRows ? '' : '(';
+        $lastBracket = $multipleRows ? '' : ')';
 
-        return "INSERT INTO `{$table}` ({$columnsQuery}) VALUES {$valuesQuery}";
+        return "INSERT INTO `{$table}` ({$columnsQuery}) VALUES {$firstBracket}{$valuesQuery}{$lastBracket}";
     }
 
     protected function update(string $table, array $columns): string

@@ -11,7 +11,7 @@ class TestDataGenerator extends DataGenerator
 {
     public function generate(bool $withOutput = false): void
     {
-        Test::mapper()->createOne([
+        $data = [
             'title' => 'test title',
             'int_status' => 1,
             'json' => json_encode(['k' => 'v', 'k1' => ['k2' => 'v', 'k3' => 3]]),
@@ -19,6 +19,9 @@ class TestDataGenerator extends DataGenerator
             'float' => 3.3,
             'enum_string' => TestEnumString::FIRST_CASE->value,
             'convert_enum' => TestConvertEnum::ACTIVE->value,
-        ]);
+        ];
+        $mapper = Test::mapper();
+        //$mapper->createOne($data);
+        $mapper->createMany([$data, $data]);
     }
 }

@@ -53,6 +53,8 @@ class MysqlMapper extends Mapper
         }
 
         $this->preparedQuery->createMany($data);
+
+        return null;
     }
 
     /**
